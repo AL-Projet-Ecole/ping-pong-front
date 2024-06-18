@@ -8,7 +8,6 @@ import TrendingCard from "components/cards/TwoTrendingPreviewCardsWithImage.js";
 import Testimonial from "components/testimonials/TwoColumnWithImageAndProfilePictureReview.js";
 import FAQ from "components/faqs/SimpleWithSideImage.js";
 import SubscribeNewsLetterForm from "components/forms/SimpleSubscribeNewsletter.js";
-import Footer from "components/footers/MiniCenteredFooter.js";
 
 export default (
   tradMode, 
@@ -22,6 +21,5 @@ export default (
     <MainFeature />
     <FAQ />
     <SubscribeNewsLetterForm />
-    <Footer />
   </AnimationRevealPage>
 );
