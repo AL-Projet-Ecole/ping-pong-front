@@ -4,7 +4,7 @@ import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
 import styled from "styled-components";
 import {css} from "styled-components/macro"; //eslint-disable-line
-import illustration from "../../assets/images/login-illustration.svg";
+import illustration from "../../assets/images/ping-pong-logo1.png";
 import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg";
 import { LoginApi } from "../../models/AuthModel"; // Updated the import path
 import { useNavigate } from "react-router-dom"; // Import useNavigate
