@@ -6,7 +6,8 @@ import styled from "styled-components";
 import {css} from "styled-components/macro"; //eslint-disable-line
 import illustration from "../../assets/images/login-illustration.svg";
 import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg";
-import {LoginApi } from "../../models/DummyApi";
+import { LoginApi } from "../../models/AuthModel"; // Updated the import path
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -31,50 +32,55 @@ const IllustrationImage = styled.div`
 `;
 
 export default ({
-  logoLinkUrl = "#",
-  tokenManager,
-  illustrationImageSrc = illustration,
-  headingText = "Authentification",
-  submitButtonText = "Se connecter",
-  SubmitButtonIcon = LoginIcon,
-  forgotPasswordUrl = "#",
-  signupUrl = "#",
-  username = useRef(null),
-  password = useRef(null)
+                  logoLinkUrl = "#",
+                  tokenManager,
+                  illustrationImageSrc = illustration,
+                  headingText = "Authentification",
+                  submitButtonText = "Se connecter",
+                  SubmitButtonIcon = LoginIcon,
+                  forgotPasswordUrl = "#",
+                  signupUrl = "#",
+                }) => {
+  const navigate = useNavigate(); // Initialize the navigate hook
+  const username = useRef(null);
+  const password = useRef(null);
 
-}) => {
-    const handleLogin = () => {
-      const email = username.current.value;
-      const pass = password.current.value;
-      LoginApi(email, pass)
-        .then(data=> {
-          tokenManager(data.token)
+  const handleLogin = () => {
+    const email = username.current.value;
+    const pass = password.current.value;
+    LoginApi(email, pass)
+        .then(data => {
+          tokenManager(data.token);
+          navigate('/'); // Redirect after successful login
         })
+        .catch(error => {
+          // Handle error (optional)
+          console.error('Login failed', error);
+        });
   };
+
   return (
-    <AnimationRevealPage>
-      <Container>
-        <Content>
-          <MainContainer>
-            <MainContent>
-              <Heading>{headingText}</Heading>
-              <FormContainer>
+      <AnimationRevealPage>
+        <Container>
+          <Content>
+            <MainContainer>
+              <MainContent>
+                <Heading>{headingText}</Heading>
+                <FormContainer>
                   <Input ref={username} placeholder="Username" />
                   <Input ref={password} type="password" placeholder="Password" />
                   <SubmitButton onClick={handleLogin}>
-                    <SubmitButtonIcon className="icon" />
+                    <LoginIcon className="icon" />
                     <span className="text">{submitButtonText}</span>
                   </SubmitButton>
-                <p tw="mt-6 text-xs text-gray-600 text-center">
-                </p>
-              </FormContainer>
-            </MainContent>
-          </MainContainer>
-          <IllustrationContainer>
-            <IllustrationImage imageSrc={illustrationImageSrc} />
-          </IllustrationContainer>
-        </Content>
-      </Container>
-    </AnimationRevealPage>
+                </FormContainer>
+              </MainContent>
+            </MainContainer>
+            <IllustrationContainer>
+              <IllustrationImage imageSrc={illustrationImageSrc} />
+            </IllustrationContainer>
+          </Content>
+        </Container>
+      </AnimationRevealPage>
   );
 }
