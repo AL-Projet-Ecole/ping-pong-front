@@ -18,8 +18,9 @@ export async function LoginApi(username, password) {
             return res.json();
         })
         .then(data => {
-            // Redirection vers la page d'accueil après connexion réussie
-            window.location.href = '/';
+            if (data.token) {
+                window.location.href = '/';
+            }
             return data;
         })
         .catch(error => {

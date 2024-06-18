@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import GlobalStyles from './assets/styles/GlobalStyles';
 import './assets/styles/style.css';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/common/Header/Header';
 import Login from './views/Login/Login';
 import Blog from './views/Blog/Blog';
@@ -14,7 +14,6 @@ import useAuth from './hooks/useAuth';
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [tradMode, setTradMode] = useState("fr");
-  const location = useLocation(); // Utiliser useLocation pour obtenir le chemin d'accès actuel
 
   const toggleTheme = () => {
     setDarkMode(prevMode => !prevMode);
@@ -47,16 +46,16 @@ function App() {
   return (
       <>
         <GlobalStyles />
+        <Router>
           <div className="App" style={themeColor}>
-            {location.pathname !== '/login' && (
-                <Header darkMode={darkMode} toggleTheme={toggleTheme} tradMode={tradMode} toggleTrad={toggleTradMode} />
-            )}
+            <Header darkMode={darkMode} toggleTheme={toggleTheme} tradMode={tradMode} toggleTrad={toggleTradMode} />
             <Routes>
               <Route path="/" element={<HomePage tradMode={tradMode} toggleTrad={toggleTradMode} />} />
               <Route path="/login" element={<Login tokenManager={tokenManager} token={token} />} />
               <Route path="/blog" element={<Blog tokenManager={tokenManager} token={token} />} />
             </Routes>
           </div>
+        </Router>
       </>
   );
 }
