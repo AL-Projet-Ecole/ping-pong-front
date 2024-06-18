@@ -5,6 +5,7 @@ import { Routes, Route } from 'react-router-dom';
 import Header from './components/common/Header/Header';
 import Login from './views/Login/Login';
 import Blog from './views/Blog/Blog';
+import Admin from './views/Admin/AdminUsers'
 import theme from './assets/themes/theme';
 import HomePage from './views/Home/HomePage';
 import useAuth from './hooks/useAuth';
@@ -46,6 +47,7 @@ function App({ location }) {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login tokenManager={tokenManager} token={token} />} />
             <Route path="/blog" element={<Blog tokenManager={tokenManager} token={token} />} />
+            <Route path="/admin" element={<Admin tokenManager={tokenManager} token={token} />} />
           </Routes>
         </div>
       </>

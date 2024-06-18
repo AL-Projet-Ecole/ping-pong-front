@@ -36,7 +36,7 @@ function Header({ darkMode, toggleTheme, tradMode, toggleTrad }) {
         <Nav className="me-auto" navbarScroll>
           <Nav.Link style={navBarCT} as={Link} to="/Atelier">Atelier</Nav.Link>
           <Nav.Link style={navBarCT} as={Link} to="/Commercial">Commercial</Nav.Link>
-          <Nav.Link style={navBarCT} as={Link} to="/xxx">Admin</Nav.Link>
+          <Nav.Link style={navBarCT} as={Link} to="/Admin">Admin</Nav.Link>
         </Nav>
         <Button onClick={toggleTheme} variant={darkMode ? 'light' : 'dark'}>
           {darkMode ? "Mode Clair" : "Mode Sombre"}
