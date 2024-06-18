@@ -1,29 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Navbar, Nav, Form, Button, NavDropdown } from 'react-bootstrap';
+import { Navbar, Nav, Button } from 'react-bootstrap';
 import theme from '../../../assets/themes/theme';
 
 function Header({ darkMode, toggleTheme, tradMode, toggleTrad }) {
   const [scroll, setScroll] = useState(false);
-  const [dataTrad, setdataTrad] = useState({});
-
-  useEffect(() => {
-    if (tradMode === 'fr') {
-      setdataTrad({
-        home: "Accueil",
-        search : "Recherche",
-        light : "Mode Clair",
-        dark : "Mode Sombre"
-      })
-    } else {
-      setdataTrad({
-        home: "Home",
-        search : "Search",
-        light : "Light Mode",
-        dark : "Dark Mode"
-      })
-    }
-  }, [tradMode]);
 
   // Fonction pour mettre à jour l'état de scroll
   const changeNavBackground = () => {
@@ -49,25 +30,16 @@ function Header({ darkMode, toggleTheme, tradMode, toggleTrad }) {
 
   return (
     <Navbar style={navBarBG} expand="lg p-2" fixed="top">
-      <Navbar.Brand style={navBarCT} as={Link} to="/">Aizen Work</Navbar.Brand>
+      <Navbar.Brand style={navBarCT} as={Link} to="/">Ping Pong</Navbar.Brand>
       <Navbar.Toggle aria-controls="navbarScroll" />
       <Navbar.Collapse id="navbarScroll">
         <Nav className="me-auto" navbarScroll>
-          <Nav.Link style={navBarCT} as={Link} to="/">{dataTrad.home}</Nav.Link>
-          <Nav.Link style={navBarCT} as={Link} to="/Blog">Blog</Nav.Link>
-          <NavDropdown style={navBarCT} title="Licences" id="navbarScrollingDropdown">
-            <NavDropdown.Item href="#idLiscence">One Piece</NavDropdown.Item>
-          </NavDropdown>
+          <Nav.Link style={navBarCT} as={Link} to="/Atelier">Atelier</Nav.Link>
+          <Nav.Link style={navBarCT} as={Link} to="/Commercial">Commercial</Nav.Link>
+          <Nav.Link style={navBarCT} as={Link} to="/xxx">Admin</Nav.Link>
         </Nav>
-        <Form className="d-flex me-2">
-          <Form.Control type="search" placeholder="Search" className="me-2" aria-label="Search" />
-          <Button variant={darkMode ? 'light' : 'dark'}>{dataTrad.search}</Button>
-        </Form>
         <Button onClick={toggleTheme} variant={darkMode ? 'light' : 'dark'}>
-          {darkMode ? dataTrad.light : dataTrad.dark}
-        </Button>
-        <Button onClick={toggleTrad} variant={darkMode ? 'light' : 'dark'}>
-          {tradMode === "en" ? 'en' : 'fr'}
+          {darkMode ? "Mode Clair" : "Mode Sombre"}
         </Button>
       </Navbar.Collapse>
     </Navbar>
