@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
+import {logout} from '../../../models/AuthModel';
 import theme from '../../../assets/themes/theme';
 
 function Header({ darkMode, toggleTheme, tradMode, toggleTrad }) {
@@ -29,20 +30,24 @@ function Header({ darkMode, toggleTheme, tradMode, toggleTrad }) {
   const navBarCT = { color: darkMode ? theme.dark.text : theme.light.text };
 
   return (
-    <Navbar style={navBarBG} expand="lg p-2" fixed="top">
-      <Navbar.Brand style={navBarCT} as={Link} to="/">Ping Pong</Navbar.Brand>
-      <Navbar.Toggle aria-controls="navbarScroll" />
-      <Navbar.Collapse id="navbarScroll">
-        <Nav className="me-auto" navbarScroll>
-          <Nav.Link style={navBarCT} as={Link} to="/Atelier">Atelier</Nav.Link>
-          <Nav.Link style={navBarCT} as={Link} to="/Commercial">Commercial</Nav.Link>
-          <Nav.Link style={navBarCT} as={Link} to="/Admin">Admin</Nav.Link>
-        </Nav>
-        <Button onClick={toggleTheme} variant={darkMode ? 'light' : 'dark'}>
-          {darkMode ? "Mode Clair" : "Mode Sombre"}
-        </Button>
-      </Navbar.Collapse>
-    </Navbar>
+      <Navbar style={navBarBG} expand="lg p-2" fixed="top">
+        <Navbar.Brand style={navBarCT}>Ping Pong</Navbar.Brand>
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        <Navbar.Collapse id="navbarScroll">
+          <Nav className="me-auto" navbarScroll>
+            <Nav.Link style={navBarCT} as={Link} to="/Atelier">Atelier</Nav.Link>
+            <Nav.Link style={navBarCT} as={Link} to="/Commercial">Commercial</Nav.Link>
+            <Nav.Link style={navBarCT} as={Link} to="/Admin">Admin</Nav.Link>
+          </Nav>
+          <div className="d-flex align-items-center">
+            <Button onClick={toggleTheme} variant={darkMode ? 'light' : 'dark'}>
+              {darkMode ? "Mode Clair" : "Mode Sombre"}
+            </Button>
+            <div style={{ width: '10px' }}></div>
+            <Button onClick={() => logout()} variant={darkMode ? 'light' : 'dark'}>Déconnexion</Button>
+          </div>
+        </Navbar.Collapse>
+      </Navbar>
   );
 }
 

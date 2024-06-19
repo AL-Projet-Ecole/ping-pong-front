@@ -19,7 +19,7 @@ export async function LoginApi(username, password) {
         })
         .then(data => {
             if (data.token) {
-                window.location.href = '/';
+                window.location.href = '/Atelier';
             }
             return data;
         })
