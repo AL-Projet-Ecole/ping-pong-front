@@ -9,6 +9,7 @@ import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 import { ReactComponent as StarIcon } from "../../assets/images/star-icon.svg";
 import { ReactComponent as SvgDecoratorBlob1 } from "../../assets/images/svg-decorator-blob-5.svg";
 import { ReactComponent as SvgDecoratorBlob2 } from "../../assets/images/svg-decorator-blob-7.svg";
+import pingpongStock from "../../assets/images/ping-pong-stock.png";
 
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
 const Header = tw(SectionHeading)``;
@@ -63,77 +64,77 @@ export default ({
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Veg Mixer",
+                                title: "Table",
                                 content: "Tomato Salad & Carrot",
                                 price: "$5.99",
-                                rating: "5.0",
+                                rating: "33",
                                 reviews: "87",
                                 url: "#"
                             },
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1432139555190-58524dae6a55?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Macaroni",
+                                title: "Perform 500",
                                 content: "Cheese Pizza",
                                 price: "$2.99",
-                                rating: "4.8",
+                                rating: "876",
                                 reviews: "32",
                                 url: "#"
                             },
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327??ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Nelli",
+                                title: "Perform 400",
                                 content: "Hamburger & Fries",
                                 price: "$7.99",
-                                rating: "4.9",
+                                rating: "43",
                                 reviews: "89",
                                 url: "#"
                             },
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Jalapeno Poppers",
+                                title: "Perform 600",
                                 content: "Crispy Soyabeans",
                                 price: "$8.99",
-                                rating: "4.6",
-                                reviews: "12",
+                                rating: "35",
+                                reviews: "36",
                                 url: "#"
                             },
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1473093226795-af9932fe5856?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Cajun Chicken",
+                                title: "Perform 800",
                                 content: "Roasted Chicken & Egg",
                                 price: "$7.99",
-                                rating: "4.2",
+                                rating: "12",
                                 reviews: "19",
                                 url: "#"
                             },
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1550461716-dbf266b2a8a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Chillie Cake",
+                                title: "Excell 1000",
                                 content: "Deepfried Chicken",
                                 price: "$2.99",
-                                rating: "5.0",
+                                rating: "57",
                                 reviews: "61",
                                 url: "#"
                             },
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Guacamole Mex",
+                                title: "Excell 1000 Carbon",
                                 content: "Mexican Chilli",
                                 price: "$3.99",
-                                rating: "4.2",
+                                rating: "45",
                                 reviews: "95",
                                 url: "#"
                             },
                             {
                                 imageSrc:
                                     "https://images.unsplash.com/photo-1565310022184-f23a884f29da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=80",
-                                title: "Carnet Nachos",
+                                title: "Balles",
                                 content: "Chilli Crispy Nachos",
                                 price: "$3.99",
                                 rating: "3.9",
@@ -190,7 +191,7 @@ export default ({
                         {tabs[tabKey].map((card, index) => (
                             <CardContainer key={index}>
                                 <Card className="group" href={card.url} initial="rest" whileHover="hover" animate="rest">
-                                    <CardImageContainer imageSrc={card.imageSrc}>
+                                    <CardImageContainer imageSrc={pingpongStock}>
                                         <CardRatingContainer>
                                             <CardRating>
                                                 {card.rating}
