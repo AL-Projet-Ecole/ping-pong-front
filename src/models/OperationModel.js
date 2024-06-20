@@ -4,6 +4,12 @@ export async function loadOperations() {
         .then(data => {return data});
 }
 
+export async function loadListeOperations(id) {
+    return fetch('http://127.0.0.1:3333/listeOperations/'+ id)
+        .then(res => res.json())
+        .then(data => {return data});
+}
+
 export async function AddOperation(id_poste, id_machine, libelle_operation, temps_estimation){
     return fetch('https://dummyjson.com/machines', {
         method: 'POST',
