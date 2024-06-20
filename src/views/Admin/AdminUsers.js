@@ -5,8 +5,7 @@ import styled from "styled-components";
 import tw from "twin.macro";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ContentWithPaddingXl, Container } from "components/misc/Layouts.js";
-import { SectionHeading, Subheading as SubheadingBase } from "components/misc/Headings.js";
-import { SectionDescription } from "components/misc/Typography";
+import { SectionHeading} from "components/misc/Headings.js";
 import { ReactComponent as TwitterIcon } from "../../assets/images/twitter-icon.svg";
 import { ReactComponent as LinkedinIcon } from "../../assets/images/linkedin-icon.svg";
 import { ReactComponent as GithubIcon } from "../../assets/images/github-icon.svg";

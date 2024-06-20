@@ -35,7 +35,7 @@ function Header({ darkMode, toggleTheme, tradMode, toggleTrad }) {
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto" navbarScroll>
-            <Nav.Link style={navBarCT} as={Link} to="/Atelier">Atelier</Nav.Link>
+            <Nav.Link style={navBarCT} as={Link} to="/HubAtelier">Atelier</Nav.Link>
             <Nav.Link style={navBarCT} as={Link} to="/Commercial">Commercial</Nav.Link>
             <Nav.Link style={navBarCT} as={Link} to="/Admin">Admin</Nav.Link>
           </Nav>
