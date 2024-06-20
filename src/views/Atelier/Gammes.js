@@ -7,6 +7,7 @@ import { css } from "styled-components/macro"; //eslint-disable-line
 import { SectionHeading, Subheading as SubheadingBase } from "components/misc/Headings.js";
 import { ReactComponent as PlusIcon } from "feather-icons/dist/icons/plus.svg";
 import { ReactComponent as MinusIcon } from "feather-icons/dist/icons/minus.svg";
+import {loadOperations} from "../../models/OperationModel";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-16 lg:py-20`;
@@ -70,6 +71,8 @@ export default ({
 
     const [allGammes, setAllGammes] = useState([]);
 
+    const [allOperations, setAllOperations] = useState([]);
+
     useEffect(() => {
         loadGammes().then(data => {
             setAllGammes(data);
@@ -118,7 +121,7 @@ export default ({
                             <Heading>Gammes</Heading>
                             <PostsContainer>
                                 {allGammes.length > 0 && allGammes.map((gamme, index) => (
-                                    <Post key={index} href={gamme.url} className="group">
+                                    <Post key={index} onClick={loadOperations(gamme.id_gamme)} className="group">
                                         <PostTextContainer>
                                             <Title>{gamme.titre_gamme}</Title>
                                         </PostTextContainer>
@@ -133,7 +136,7 @@ export default ({
                             {subheading ? <Subheading>{subheading}</Subheading> : null}
                             <Heading>{heading}</Heading>
                             <FAQSContainer>
-                                {faqs.map((faq, index) => (
+                                {allOperations.length > 0 && allOperations.map((operation, index) => (
                                     <FAQ
                                         key={index}
                                         onClick={() => {
@@ -142,7 +145,7 @@ export default ({
                                         className="group"
                                     >
                                         <Question>
-                                            <QuestionText>{faq.question}</QuestionText>
+                                            <QuestionText>{operation.question}</QuestionText>
                                             <QuestionToggleIcon>
                                                 {activeQuestionIndex === index ? <MinusIcon /> : <PlusIcon />}
                                             </QuestionToggleIcon>
@@ -156,7 +159,7 @@ export default ({
                                             animate={activeQuestionIndex === index ? "open" : "collapsed"}
                                             transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
                                         >
-                                            {faq.answer}
+                                            {operation.answer}
                                         </Answer>
                                     </FAQ>
                                 ))}

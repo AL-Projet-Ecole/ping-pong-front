@@ -4,12 +4,12 @@ export async function loadGammes() {
         .then(data => {return data});
 }
 
-export async function AddGamme(titre_gamme){
-    return fetch('https://dummyjson.com/gammes', {
+export async function AddMachine(libelle_machine){
+    return fetch('https://dummyjson.com/machines', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            titre_gamme: {titre_gamme}
+            libelle_machine: {libelle_machine}
         })
     })
         .then(res => res.json())
