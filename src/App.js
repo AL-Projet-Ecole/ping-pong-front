@@ -7,7 +7,7 @@ import Login from './views/Login/Login';
 import Blog from './views/Blog/Blog';
 import Admin from './views/Admin/AdminUsers'
 import HubAtelier from './views/Atelier/AtelierHub'
-import Gammes from './views/Atelier/Gammes'
+import Gammes from './views/DataLoader'
 import Stock from './views/Atelier/Stock'
 import Realisation from './views/Atelier/Realisation'
 import HubCommercial from './views/Commerce/CommercialHub'
@@ -57,7 +57,7 @@ function App({ location }) {
             <Route path="/Gammes" element={<Gammes tokenManager={tokenManager} token={token} />} />
             <Route path="/Stock" element={<Stock tokenManager={tokenManager} token={token} />} />
             <Route path="/Realisations" element={<Realisation tokenManager={tokenManager} token={token} />} />
-            <Route path="/HubCommercial" element={<HubCommercial tokenManager={tokenManager} token={token} />} />
+
           </Routes>
         </div>
       </>

@@ -11,3 +11,97 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Ajoutez ce style à votre fichier CSS */
+.active-gamme {
+  background-color: #f0f0f0; /* Changez la couleur de fond selon vos besoins */
+  border-left: 4px solid #007bff; /* Ajoutez une bordure gauche pour mieux distinguer */
+}
+
+/* Exemple de styles CSS pour les modals */
+
+/* Modal */
+.Modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  z-index: 1000;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ModalHeader */
+.ModalHeader {
+  padding: 1rem;
+  background-color: #007bff;
+  color: white;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+/* ModalBody */
+.ModalBody {
+  padding: 1rem;
+}
+
+/* ModalFooter */
+.ModalFooter {
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Button */
+.Button {
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+}
+
+.Button:hover {
+  background-color: #0056b3;
+}
+
+.Button.secondary {
+  background-color: #6c757d;
+}
+
+.Button.secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Input */
+.Input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Textarea */
+.Textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Error message */
+.ErrorMessage {
+  color: red;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
