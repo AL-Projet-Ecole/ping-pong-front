@@ -13,9 +13,9 @@ code {
 }
 
 /* Ajoutez ce style à votre fichier CSS */
-.active-gamme {
-  background-color: #f0f0f0; /* Changez la couleur de fond selon vos besoins */
-  border-left: 4px solid #007bff; /* Ajoutez une bordure gauche pour mieux distinguer */
+.group.active-gamme {
+  background-color: #f0f0f0; /* Couleur de fond pour l'élément actif */
+  border-left: 4px solid #007bff; /* Bordure gauche pour indiquer l'élément actif */
 }
 
 /* Exemple de styles CSS pour les modals */

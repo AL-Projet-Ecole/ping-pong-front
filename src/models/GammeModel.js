@@ -43,7 +43,7 @@ export async function AddGamme(gammeData) {
         console.log("Nouvelle gamme ajoutée");
     } catch (error) {
         console.error("Erreur lors de l'ajout de la gamme :", error.message);
-        throw error; // Propager l'erreur pour la gérer dans le composant appelant
+        throw error;
     }
 }
 
@@ -55,13 +55,13 @@ export async function DeleteGamme(id_gamme){
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message); // Adapter le message d'erreur en fonction de votre API
+            throw new Error(errorData.message);
         }
 
         console.log(`Gamme avec l'ID ${id_gamme} supprimée avec succès`);
     } catch (error) {
         console.error("Erreur lors de la suppression de la gamme :", error.message);
-        throw error; // Propager l'erreur pour la gérer dans le composant appelant si nécessaire
+        throw error;
     }
 }
 

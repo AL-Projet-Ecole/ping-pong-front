@@ -1,16 +1,64 @@
-import React, { useState } from "react";
-import { SearchInput, AddButton, DeleteButton, Post, PostTextContainer, Title, Image, GlobalFirstContainer, FirstContainer, Heading, SearchInputContainer } from "./CommonStyledComponents";
+import React, { useState, useEffect } from "react";
+import {
+    SearchInput,
+    AddButton,
+    DeleteButton,
+    Post,
+    PostTextContainer,
+    Title,
+    GlobalFirstContainer,
+    FirstContainer,
+    Heading,
+    SearchInputContainer
+} from "./CommonStyledComponents";
 import { ReactComponent as PlusIcon } from "feather-icons/dist/icons/plus.svg";
 import { ReactComponent as XIcon } from "feather-icons/dist/icons/x.svg";
 
-const ListComponent = ({ items, onItemClick, onOpenModal, onOpenDeleteConfirmation, onSearch, firstTitle, activeGammeId }) => {
+const ListComponent = ({
+                           action,
+                           items,
+                           onItemClick,
+                           onButtonClick,
+                           onSearch,
+                           firstTitle,
+                           activeItemId
+                       }) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [buttonActionAdd, setButtonActionAdd] = useState("");
+    const [buttonActionDel, setButtonActionDel] = useState("");
 
     const handleSearch = (e) => {
         const value = e.target.value;
         setSearchTerm(value);
         onSearch(value);
     };
+
+    useEffect(() => {
+        switch (action) {
+            case "gamme":
+                setButtonActionAdd("addGamme");
+                setButtonActionDel("delGamme");
+                break;
+            case "operation":
+                setButtonActionAdd("addOperation");
+                setButtonActionDel("delOperation");
+                break;
+            case "machine":
+                setButtonActionAdd("addMachine");
+                setButtonActionDel("delMachine");
+                break;
+            case "poste":
+                setButtonActionAdd("addPoste");
+                setButtonActionDel("delPoste");
+                break;
+            case "realisation":
+                setButtonActionAdd("addRealisation");
+                setButtonActionDel("delRealisation");
+                break;
+            default:
+                break;
+        }
+    }, [action]);
 
     return (
         <GlobalFirstContainer>
@@ -23,7 +71,7 @@ const ListComponent = ({ items, onItemClick, onOpenModal, onOpenDeleteConfirmati
                         value={searchTerm}
                         onChange={handleSearch}
                     />
-                    <AddButton onClick={onOpenModal}>
+                    <AddButton onClick={() => onButtonClick(buttonActionAdd)}>
                         <PlusIcon />
                     </AddButton>
                 </SearchInputContainer>
@@ -33,17 +81,16 @@ const ListComponent = ({ items, onItemClick, onOpenModal, onOpenDeleteConfirmati
                     items.map((item, index) => (
                         <Post
                             key={index}
-                            onClick={() => onItemClick(item.id)}
-                            className={`group ${activeGammeId === item.id ? 'active-gamme' : ''}`}
+                            onClick={() => onItemClick(item.id)} // Appel de onItemClick avec l'ID de l'élément
+                            className={`group ${activeItemId === item.id ? "active-gamme" : ""}`}
                         >
                             <PostTextContainer>
                                 <Title>{item.title}</Title>
                             </PostTextContainer>
-                            <Image $imageSrc={item.postImageSrc} />
                             <DeleteButton
-                                onClick={e => {
+                                onClick={(e) => {
                                     e.stopPropagation();
-                                    onOpenDeleteConfirmation(item);
+                                    onButtonClick(buttonActionDel, item);
                                 }}
                             >
                                 <XIcon />

@@ -10,7 +10,6 @@ export const loadOperations = async () => {
             title: operation.libelle_operation,
             description: operation.temps_estimation,
             idm: operation.id_machine
-            // Ajoutez d'autres champs si nécessaire
         }));
     } catch (error) {
         console.error(error);
@@ -31,7 +30,6 @@ export const loadOperationById = async (id_operation) => {
             title: data.libelle_operation,
             description: data.temps_estimation,
             idm: data.id_machine,
-            // Ajoutez d'autres champs si nécessaire
         };
     } catch (error) {
         console.error(error);
@@ -78,12 +76,12 @@ export async function DeleteOperation(id_operation){
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message); // Adapter le message d'erreur en fonction de votre API
+            throw new Error(errorData.message);
         }
 
         console.log(`Gamme avec l'ID ${id_operation} supprimée avec succès`);
     } catch (error) {
         console.error("Erreur lors de la suppression de la gamme :", error.message);
-        throw error; // Propager l'erreur pour la gérer dans le composant appelant si nécessaire
+        throw error;
     }
 }

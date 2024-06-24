@@ -16,11 +16,6 @@ import HomePage from './views/Home/HomePage';
 import useAuth from './hooks/useAuth';
 
 function App({ location }) {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleTheme = () => {
-    setDarkMode(prevMode => !prevMode);
-  };
 
   const [token, setToken] = useState("");
   useEffect(() => {
@@ -34,19 +29,14 @@ function App({ location }) {
     sessionStorage.setItem("token", jwtToken);
   };
 
-  const themeColor = {
-    background: darkMode ? theme.dark.background : theme.light.background,
-    color: darkMode ? theme.dark.text : theme.light.text
-  };
-
   useAuth();
 
   return (
       <>
         <GlobalStyles />
-        <div className="App" style={themeColor}>
+        <div className="App" >
           {location.pathname !== '/login' && (
-              <Header darkMode={darkMode} toggleTheme={toggleTheme} />
+              <Header />
           )}
           <Routes>
             <Route path="/" element={<HomePage />} />

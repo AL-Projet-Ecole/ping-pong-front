@@ -8,15 +8,18 @@ import {
     SecondeToggleIcon,
     Answer,
     Heading,
-    SearchInputContainer, SEC,
+    SearchInputContainer, SEC, AddButton, DeleteButton, ButtonContainer,
 } from "./CommonStyledComponents";
 import { ReactComponent as PlusIcon } from "feather-icons/dist/icons/plus.svg";
 import { ReactComponent as MinusIcon } from "feather-icons/dist/icons/minus.svg";
+import { ReactComponent as XIcon } from "feather-icons/dist/icons/x.svg";
 
 const SecondListComponent = ({
-                                 items = [], // Assurez-vous que items est initialisé à un tableau vide par défaut
+                                 items = [],
                                  onSearch,
-                                 secondTitle
+                                 secondTitle,
+                                 onOpenModal,
+                                 onOpenDeleteConfirmation
                              }) => {
     const [activeSecondeIndex, setActiveSecondeIndex] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -46,6 +49,9 @@ const SecondListComponent = ({
                         value={searchTerm}
                         onChange={handleSearch}
                     />
+                    <AddButton onClick={onOpenModal}>
+                        <PlusIcon />
+                    </AddButton>
                 </SearchInputContainer>
             </Heading>
         <SecondeContainer>
@@ -58,9 +64,19 @@ const SecondListComponent = ({
                     >
                         <Seconde>
                             <SecondeText>{item.title}</SecondeText>
-                            <SecondeToggleIcon>
-                                {activeSecondeIndex === index ? <MinusIcon /> : <PlusIcon />}
-                            </SecondeToggleIcon>
+                            <ButtonContainer>
+                                <SecondeToggleIcon>
+                                    {activeSecondeIndex === index ? <MinusIcon /> : <PlusIcon />}
+                                </SecondeToggleIcon>
+                                <DeleteButton
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        onOpenDeleteConfirmation(item);
+                                    }}
+                                >
+                                    <XIcon />
+                                </DeleteButton>
+                            </ButtonContainer>
                         </Seconde>
                         <Answer
                             variants={{
