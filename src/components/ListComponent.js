@@ -81,7 +81,7 @@ const ListComponent = ({
                     items.map((item, index) => (
                         <Post
                             key={index}
-                            onClick={() => onItemClick(item.id)} // Appel de onItemClick avec l'ID de l'élément
+                            onClick={() => onItemClick(item)}
                             className={`group ${activeItemId === item.id ? "active-gamme" : ""}`}
                         >
                             <PostTextContainer>

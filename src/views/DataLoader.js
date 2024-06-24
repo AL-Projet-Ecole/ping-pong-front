@@ -6,7 +6,9 @@ import {
     AddOperation,
     DeleteOperation,
     loadListeOperations,
-    loadOperationById
+    loadOperationById,
+    loadUnassignedListeOperations,
+    DeleteAssignedOperation
 } from "../models/OperationModel";
 import ListComponent from "../components/ListComponent";
 import SecondListComponent from "../components/SecondListComponent";
@@ -67,9 +69,9 @@ const DataLoader = () => {
         setFilteredSecond(secondData.filter(item => item.title.toLowerCase().includes(term.toLowerCase())));
     };
 
-    const handleGammeItemClick = async (id) => {
-        setActiveGamme(id);
-        const operationsIds = await loadListeOperations(id);
+    const handleGammeItemClick = async (item) => {
+        setActiveGamme(item);
+        const operationsIds = await loadListeOperations(item.id);
         const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation)));
         setSecondData(operations);
     };
@@ -85,7 +87,7 @@ const DataLoader = () => {
         setError("");
     };
 
-    const getOnClickAction = (action, item) => {
+    const getOnClickAction = async (action, item) => {
         switch (action) {
             case "addGamme":
                 setActionModal("addGamme");
@@ -102,16 +104,36 @@ const DataLoader = () => {
                 setActionModal("delGamme");
                 openModal(item);
                 break;
-            case "addOperation":
-                setActionModal("addOperation");
-                setModalSetterInput({
-                    title: { type: "text", placeholder: "Titre" },
-                    description: { type: "textarea", placeholder: "Description" }
-                });
-                openModal();
+
+            case "addUnassignedOperation":
+                setActionModal("addUnassignedOperation");
+                try {
+                    console.log(item)
+                    const optionsValues = await loadUnassignedListeOperations(item);
+
+                    const unassignedOperations = await Promise.all(
+                        optionsValues.map(async (operation) => await loadOperationById(operation.id_operation))
+                    );
+
+                    const filteredOperations = unassignedOperations.filter(operation => operation !== null);
+
+                    const options = filteredOperations.map(option => ({
+                        value: option.id,
+                        label: option.title
+                    }));
+                    console.log(options)
+
+                    setModalSetterInput({
+                        operation: { type: "select", options }
+                    });
+                    openModal();
+                } catch (error) {
+                    console.error("Erreur lors du chargement des opérations non attribuées", error);
+                }
                 break;
-            case "delOperation":
-                setActionModal("delOperation");
+
+            case "delAssignedOperation":
+                setActionModal("delAssignedOperation");
                 openModal(item);
                 break;
             default:
@@ -143,7 +165,7 @@ const DataLoader = () => {
                 loadGammes().then(setFirstData);
                 closeModal();
                 break;
-            case "addOperation":
+            case "addUnassignedOperation":
                 if (!inputValues.title || !inputValues.description) {
                     setError("Les champs Titre et Description doivent être remplis.");
                     return;
@@ -153,12 +175,12 @@ const DataLoader = () => {
                     description: inputValues.description
                 };
                 await AddOperation(newItem);
-                loadOperations().then(setFirstData);
+                //loadOperations().then(setFirstData);
                 closeModal();
                 break;
-            case "delOperation":
-                await DeleteOperation(id);
-                loadOperations().then(setFirstData);
+            case "delAssignedOperation":
+                await DeleteAssignedOperation(id);
+                //loadOperations().then(setFirstData);
                 closeModal();
                 break;
             default:
@@ -174,7 +196,7 @@ const DataLoader = () => {
                     <ListComponent
                         action={action}
                         items={filteredFirst.length > 0 ? filteredFirst : firstData}
-                        onItemClick={handleGammeItemClick} // Passer la fonction handleGammeItemClick comme prop
+                        onItemClick={handleGammeItemClick}
                         onButtonClick={getOnClickAction}
                         onSearch={handleFirstSearch}
                         firstTitle={action === "gamme" ? "Gammes" : action.charAt(0).toUpperCase() + action.slice(1)}
@@ -183,11 +205,13 @@ const DataLoader = () => {
                 </Column>
                 <Column>
                     <SecondListComponent
+                        action={action}
                         secondTitle="Opérations"
                         items={filteredSecond.length ? filteredSecond : secondData}
                         onItemClick={handleGammeItemClick}
                         onButtonClick={getOnClickAction}
                         onSearch={handleSecondeSearch}
+                        activeItemId={activeGamme?.id}
                     />
                 </Column>
             </TwoColumn>

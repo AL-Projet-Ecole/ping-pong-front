@@ -52,6 +52,37 @@ export const loadListeOperations = async (id_gamme) => {
     }
 };
 
+export const loadUnassignedListeOperations = async (id_gamme) => {
+    try {
+        const response = await fetch('http://127.0.0.1:3333/listeOperations/Unassigned/' + id_gamme);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des opérations de la gamme');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+};
+
+export async function DeleteAssignedOperation(id_liste_operation){
+    try {
+        const response = await fetch(`http://127.0.0.1:3333/listeOperations/${id_liste_operation}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+
+        console.log(`Operation assigné avec l'ID ${id_liste_operation} supprimée avec succès`);
+    } catch (error) {
+        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        throw error;
+    }
+}
 
 export async function AddOperation(id_poste, id_machine, libelle_operation, temps_estimation){
     return fetch('https://dummyjson.com/machines', {

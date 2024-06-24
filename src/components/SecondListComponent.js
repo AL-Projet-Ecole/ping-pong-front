@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     SECContent,
     SearchInput,
@@ -15,14 +15,17 @@ import { ReactComponent as MinusIcon } from "feather-icons/dist/icons/minus.svg"
 import { ReactComponent as XIcon } from "feather-icons/dist/icons/x.svg";
 
 const SecondListComponent = ({
+                                 action,
                                  items = [],
                                  onSearch,
                                  secondTitle,
-                                 onOpenModal,
-                                 onOpenDeleteConfirmation
+                                 onButtonClick,
+                                 activeItemId
                              }) => {
     const [activeSecondeIndex, setActiveSecondeIndex] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [buttonActionAdd, setButtonActionAdd] = useState("");
+    const [buttonActionDel, setButtonActionDel] = useState("");
 
     const toggleSeconde = (questionIndex) => {
         if (activeSecondeIndex === questionIndex) {
@@ -38,6 +41,25 @@ const SecondListComponent = ({
         onSearch(value);
     };
 
+    useEffect(() => {
+        switch (action) {
+            case "gamme":
+                setButtonActionAdd("addUnassignedOperation");
+                setButtonActionDel("delAssignedOperation");
+                break;
+            case "poste":
+                setButtonActionAdd("addMachine");
+                setButtonActionDel("delMachine");
+                break;
+            case "realisation":
+                setButtonActionAdd("addRealisation");
+                setButtonActionDel("delRealisation");
+                break;
+            default:
+                break;
+        }
+    }, [action]);
+
     return (
         <SECContent>
             <Heading>
@@ -49,7 +71,7 @@ const SecondListComponent = ({
                         value={searchTerm}
                         onChange={handleSearch}
                     />
-                    <AddButton onClick={onOpenModal}>
+                    <AddButton onClick={() => onButtonClick(buttonActionAdd, activeItemId)}>
                         <PlusIcon />
                     </AddButton>
                 </SearchInputContainer>
@@ -71,7 +93,7 @@ const SecondListComponent = ({
                                 <DeleteButton
                                     onClick={e => {
                                         e.stopPropagation();
-                                        onOpenDeleteConfirmation(item);
+                                        onButtonClick(buttonActionDel, item);
                                     }}
                                 >
                                     <XIcon />

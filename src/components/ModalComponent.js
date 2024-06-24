@@ -39,6 +39,22 @@ const ModalComponent = ({
                 );
             }
 
+            if (inputConfig.type === "select") {
+                return (
+                    <select
+                        key={index}
+                        value={value}
+                        onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
+                    >
+                        {inputConfig.options.map((option, idx) => (
+                            <option key={idx} value={option.value}>
+                                {option.label}
+                            </option>
+                        ))}
+                    </select>
+                );
+            }
+
             return (
                 <Input
                     key={index}
