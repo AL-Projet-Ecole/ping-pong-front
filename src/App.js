@@ -10,6 +10,9 @@ import HubAtelier from './views/Atelier/AtelierHub'
 import Gammes from './views/DataLoader'
 import Stock from './views/Atelier/Stock'
 import Realisation from './views/Atelier/Realisation'
+import Operation from './views/DataLoader'
+import Postes from './views/DataLoader'
+import Machines from './views/DataLoader'
 import HubCommercial from './views/Commerce/CommercialHub'
 import theme from './assets/themes/theme';
 import HomePage from './views/Home/HomePage';
@@ -47,7 +50,9 @@ function App({ location }) {
             <Route path="/Gammes" element={<Gammes tokenManager={tokenManager} token={token} />} />
             <Route path="/Stock" element={<Stock tokenManager={tokenManager} token={token} />} />
             <Route path="/Realisations" element={<Realisation tokenManager={tokenManager} token={token} />} />
-
+            <Route path="/Operations" element={<Operation tokenManager={tokenManager} token={token} />} />
+            <Route path="/Postes" element={<Postes tokenManager={tokenManager} token={token} />} />
+            <Route path="/Machines" element={<Machines tokenManager={tokenManager} token={token} />} />
           </Routes>
         </div>
       </>

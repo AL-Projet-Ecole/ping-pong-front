@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { loadGammes, AddGamme, DeleteGamme } from "../models/GammeModel";
+import { loadPostes } from "../models/PosteModel";
 import {
     loadOperations,
     AddOperation,
-    DeleteOperation,
     loadListeOperations,
     loadOperationById,
     loadUnassignedListeOperations,
@@ -22,6 +22,7 @@ const Column = tw.div``;
 const DataLoader = () => {
     const location = useLocation();
     const [firstData, setFirstData] = useState([]);
+    const [firstTitle, setFirstTitle] = useState([]);
     const [filteredFirst, setFilteredFirst] = useState([]);
     const [activeGamme, setActiveGamme] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -32,29 +33,40 @@ const DataLoader = () => {
     const [actionModal, setActionModal] = useState("");
 
     const [secondData, setSecondData] = useState([]);
+    const [secondTitle, setSecondTitle] = useState([]);
     const [filteredSecond, setFilteredSecond] = useState([]);
 
     useEffect(() => {
         switch (location.pathname) {
             case "/Gammes":
                 setAction("gamme");
+                setFirstTitle("Gammes");
+                setSecondTitle("Opérations");
                 loadGammes().then(setFirstData);
                 break;
             case "/Operations":
                 setAction("operation");
+                setFirstTitle("Opérations");
+                setSecondTitle("Détails");
                 loadOperations().then(setFirstData);
                 break;
             case "/Machines":
                 setAction("machine");
+                setFirstTitle("Machines");
+                setSecondTitle("Détails");
                 // loadMachines().then(setFirstData);
                 break;
             case "/Realisations":
                 setAction("realisation");
+                setFirstTitle("Réalisations");
+                setSecondTitle("Détails");
                 // loadRealisations().then(setFirstData);
                 break;
-            case "/Poste":
+            case "/Postes":
                 setAction("poste");
-                // loadPostes().then(setFirstData);
+                setFirstTitle("Postes");
+                setSecondTitle("Machines");
+                loadPostes().then(setFirstData);
                 break;
             default:
                 break;
@@ -199,14 +211,14 @@ const DataLoader = () => {
                         onItemClick={handleGammeItemClick}
                         onButtonClick={getOnClickAction}
                         onSearch={handleFirstSearch}
-                        firstTitle={action === "gamme" ? "Gammes" : action.charAt(0).toUpperCase() + action.slice(1)}
+                        firstTitle={firstTitle}
                         activeItemId={activeGamme?.id}
                     />
                 </Column>
                 <Column>
                     <SecondListComponent
                         action={action}
-                        secondTitle="Opérations"
+                        secondTitle={secondTitle}
                         items={filteredSecond.length ? filteredSecond : secondData}
                         onItemClick={handleGammeItemClick}
                         onButtonClick={getOnClickAction}
