@@ -5,6 +5,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "bootstrap/dist/css/bootstrap.min.css";
+import Modal from 'react-modal'; // Import react-modal
+
+// Définir l'élément d'application pour react-modal
+Modal.setAppElement('#root');
 
 const AppWithRouter = () => {
     const location = useLocation();
