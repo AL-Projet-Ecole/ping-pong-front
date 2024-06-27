@@ -7,20 +7,18 @@ import Login from './views/Login/Login';
 import Blog from './views/Blog/Blog';
 import Admin from './views/Admin/AdminUsers'
 import HubAtelier from './views/Atelier/AtelierHub'
-import Gammes from './views/Atelier/Gammes'
+import Gammes from './views/DataLoader'
 import Stock from './views/Atelier/Stock'
 import Realisation from './views/Atelier/Realisation'
+import Operation from './views/DataLoader'
+import Postes from './views/DataLoader'
+import Machines from './views/DataLoader'
 import HubCommercial from './views/Commerce/CommercialHub'
 import theme from './assets/themes/theme';
 import HomePage from './views/Home/HomePage';
 import useAuth from './hooks/useAuth';
 
 function App({ location }) {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleTheme = () => {
-    setDarkMode(prevMode => !prevMode);
-  };
 
   const [token, setToken] = useState("");
   useEffect(() => {
@@ -34,19 +32,14 @@ function App({ location }) {
     sessionStorage.setItem("token", jwtToken);
   };
 
-  const themeColor = {
-    background: darkMode ? theme.dark.background : theme.light.background,
-    color: darkMode ? theme.dark.text : theme.light.text
-  };
-
   useAuth();
 
   return (
       <>
         <GlobalStyles />
-        <div className="App" style={themeColor}>
+        <div className="App" >
           {location.pathname !== '/login' && (
-              <Header darkMode={darkMode} toggleTheme={toggleTheme} />
+              <Header />
           )}
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -57,7 +50,9 @@ function App({ location }) {
             <Route path="/Gammes" element={<Gammes tokenManager={tokenManager} token={token} />} />
             <Route path="/Stock" element={<Stock tokenManager={tokenManager} token={token} />} />
             <Route path="/Realisations" element={<Realisation tokenManager={tokenManager} token={token} />} />
-            <Route path="/HubCommercial" element={<HubCommercial tokenManager={tokenManager} token={token} />} />
+            <Route path="/Operations" element={<Operation tokenManager={tokenManager} token={token} />} />
+            <Route path="/Postes" element={<Postes tokenManager={tokenManager} token={token} />} />
+            <Route path="/Machines" element={<Machines tokenManager={tokenManager} token={token} />} />
           </Routes>
         </div>
       </>

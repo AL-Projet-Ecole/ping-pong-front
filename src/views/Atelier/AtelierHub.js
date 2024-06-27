@@ -32,7 +32,7 @@ const Card = styled.div`
   height: 300px; /* Hauteur standard des cartes */
   cursor: pointer;
   &:hover {
-    transform: scale(1.05); /* Ajoute un effet de zoom */
+    transform: scale(1.05);
   }
   .imageContainer {
     ${tw`border-2 border-primary-500 text-center rounded-full p-6 flex-shrink-0 relative`}
@@ -59,6 +59,9 @@ export default () => {
         { imageSrc: ShieldIconImage, title: "Gammes", link: "/Gammes" },
         { imageSrc: ReliableIconImage, title: "Stock", link: "/Stock" },
         { imageSrc: FastIconImage, title: "Réalisations", link: "/Realisations" },
+        { imageSrc: FastIconImage, title: "Opérations", link: "/Operations" },
+        { imageSrc: ShieldIconImage, title: "Postes", link: "/Postes" },
+        { imageSrc: ShieldIconImage, title: "Machines", link: "/Machines" },
     ];
 
     return (
