@@ -16,13 +16,13 @@ const ModalComponent = ({
                             onRequestClose,
                             modalTitle,
                             handleAdd,
-                            modalInputs,  // An object containing input configurations
+                            modalInputs,
                             inputValues,
                             setInputValues,
                             error,
                             actionModal
                         }) => {
-    // Function to render inputs based on modalInputs prop
+
     const renderInputs = () => {
         return Object.keys(modalInputs).map((key, index) => {
             const inputConfig = modalInputs[key];

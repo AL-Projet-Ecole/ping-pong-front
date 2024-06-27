@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { loadGammes, AddGamme, DeleteGamme } from "../models/GammeModel";
-import { loadPostes } from "../models/PosteModel";
+import { loadPostes, AddPoste, DeletePoste } from "../models/PosteModel";
+import { loadMachines, loadListeMachines} from "../models/MachineModel";
 import {
     loadOperations,
     AddOperation,
@@ -54,7 +55,7 @@ const DataLoader = () => {
                 setAction("machine");
                 setFirstTitle("Machines");
                 setSecondTitle("Détails");
-                // loadMachines().then(setFirstData);
+                loadMachines().then(setFirstData);
                 break;
             case "/Realisations":
                 setAction("realisation");
@@ -85,6 +86,13 @@ const DataLoader = () => {
         setActiveGamme(item);
         const operationsIds = await loadListeOperations(item.id);
         const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation)));
+        setSecondData(operations);
+    };
+
+    const handlePosteItemClick = async (item) => {
+        setActiveGamme(item);
+        const machinesIds = await loadListeOperations(item.id);
+        const operations = await Promise.all(machinesIds.map(async (op) => await loadOperationById(op.id_operation)));
         setSecondData(operations);
     };
 
@@ -150,6 +158,18 @@ const DataLoader = () => {
                 break;
             default:
                 break;
+
+            case "addPoste":
+                setActionModal("addPoste");
+                setModalSetterInput({
+                    libelle_poste: { type: "text", placeholder: "Libelle" }
+                });
+                openModal();
+                break;
+            case "delPoste":
+                setActionModal("delPoste");
+                openModal(item);
+                break;
         }
     };
 
@@ -196,6 +216,23 @@ const DataLoader = () => {
                 closeModal();
                 break;
             default:
+                break;
+            case "addPoste":
+                if (!inputValues.libelle_poste) {
+                    setError("Les champs Libelle doit être remplis.");
+                    return;
+                }
+                newItem = {
+                    libelle_poste: inputValues.libelle_poste,
+                };
+                await AddPoste(newItem);
+                loadPostes().then(setFirstData);
+                closeModal();
+                break;
+            case "delPoste":
+                await DeletePoste(id);
+                loadPostes().then(setFirstData);
+                closeModal();
                 break;
         }
     };
