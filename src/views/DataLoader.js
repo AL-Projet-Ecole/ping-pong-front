@@ -10,7 +10,7 @@ import {
     loadOperationById,
     loadUnassignedListeOperations,
     AddAssignementOperation,
-    DeleteAssignedOperation
+    DeleteAssignedOperation, DeleteOperation
 } from "../models/OperationModel";
 import ListComponent from "../components/ListComponent";
 import SecondListComponent from "../components/SecondListComponent";
@@ -163,7 +163,6 @@ const DataLoader = () => {
                 break;
             default:
                 break;
-
             case "addPoste":
                 setActionModal("addPoste");
                 setModalSetterInput({
@@ -173,6 +172,18 @@ const DataLoader = () => {
                 break;
             case "delPoste":
                 setActionModal("delPoste");
+                openModal(item);
+                break;
+            case "addOperation":
+                setActionModal("addOperation");
+                setModalSetterInput({
+                    libelle_operation: { type: "text", placeholder: "Intituler" },
+                    temps_estimation: { type: "number", placeholder: "Estimation du temps nécessaire en minutes" }
+                });
+                openModal();
+                break;
+            case "delOperation":
+                setActionModal("delOperation");
                 openModal(item);
                 break;
         }
@@ -235,6 +246,25 @@ const DataLoader = () => {
             case "delPoste":
                 await DeletePoste(idf);
                 loadPostes().then(setFirstData);
+                closeModal();
+                break;
+            case "addOperation":
+                if (!inputValues.libelle_operation && !inputValues.temps_estimation) {
+                    setError("Les champs doivent être remplis.");
+                    return;
+                }
+                newItem = {
+                    id_machine: inputValues.id_machine,
+                    libelle_operation: inputValues.libelle_operation,
+                    temps_estimation: inputValues.temps_estimation
+                };
+                await AddOperation(newItem);
+                loadOperations().then(setFirstData);
+                closeModal();
+                break;
+            case "delOperation":
+                await DeleteOperation(idf);
+                loadOperations().then(setFirstData);
                 closeModal();
                 break;
         }
