@@ -98,12 +98,11 @@ export async function DeleteAssignedOperation(id_liste_operation){
     }
 }
 
-export async function AddOperation(id_poste, id_machine, libelle_operation, temps_estimation){
-    return fetch('https://dummyjson.com/machines', {
+export async function AddOperation(id_machine, libelle_operation, temps_estimation){
+    return fetch('http://127.0.0.1:3333/operations/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            id_poste: {id_poste},
             id_machine: {id_machine},
             libelle_operation: {libelle_operation},
             temps_estimation: {temps_estimation}
@@ -115,7 +114,7 @@ export async function AddOperation(id_poste, id_machine, libelle_operation, temp
 
 export async function DeleteOperation(id_operation){
     try {
-        const response = await fetch(`http://127.0.0.1:3333/gammes/${id_operation}`, {
+        const response = await fetch(`http://127.0.0.1:3333/operations/${id_operation}`, {
             method: 'DELETE',
         });
 
