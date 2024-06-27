@@ -18,7 +18,7 @@ export const loadOperations = async () => {
 };
 
 
-export const loadOperationById = async (id_operation) => {
+export const loadOperationById = async (id_operation, id_liste_operation = null) => {
     try {
         const response = await fetch('http://127.0.0.1:3333/operations/' + id_operation);
         if (!response.ok) {
@@ -26,10 +26,11 @@ export const loadOperationById = async (id_operation) => {
         }
         const data = await response.json();
         return {
-            id: data.id_operation,
+            id : id_liste_operation,
+            idOp: data.id_operation,
             title: data.libelle_operation,
             description: data.temps_estimation,
-            idm: data.id_machine,
+            idM: data.id_machine,
         };
     } catch (error) {
         console.error(error);
@@ -65,6 +66,19 @@ export const loadUnassignedListeOperations = async (id_gamme) => {
         return [];
     }
 };
+
+export async function AddAssignementOperation(id_gamme, id_operation){
+    return fetch('http://127.0.0.1:3333/listeOperations/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id_gamme: {id_gamme},
+            id_operation: {id_operation},
+        })
+    })
+        .then(res => res.json())
+        .then(console.log);
+}
 
 export async function DeleteAssignedOperation(id_liste_operation){
     try {

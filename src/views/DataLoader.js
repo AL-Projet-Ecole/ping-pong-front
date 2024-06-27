@@ -9,6 +9,7 @@ import {
     loadListeOperations,
     loadOperationById,
     loadUnassignedListeOperations,
+    AddAssignementOperation,
     DeleteAssignedOperation
 } from "../models/OperationModel";
 import ListComponent from "../components/ListComponent";
@@ -25,7 +26,7 @@ const DataLoader = () => {
     const [firstData, setFirstData] = useState([]);
     const [firstTitle, setFirstTitle] = useState([]);
     const [filteredFirst, setFilteredFirst] = useState([]);
-    const [activeGamme, setActiveGamme] = useState(null);
+    const [activeFirst, setActiveFirst] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [modalSetterInput, setModalSetterInput] = useState({});
     const [inputValues, setInputValues] = useState({});
@@ -35,6 +36,7 @@ const DataLoader = () => {
 
     const [secondData, setSecondData] = useState([]);
     const [secondTitle, setSecondTitle] = useState([]);
+    const [activeSecond, setActiveSecond] = useState(null);
     const [filteredSecond, setFilteredSecond] = useState([]);
 
     useEffect(() => {
@@ -83,21 +85,26 @@ const DataLoader = () => {
     };
 
     const handleGammeItemClick = async (item) => {
-        setActiveGamme(item);
+        setActiveFirst(item);
         const operationsIds = await loadListeOperations(item.id);
-        const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation)));
+        const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
         setSecondData(operations);
     };
 
     const handlePosteItemClick = async (item) => {
-        setActiveGamme(item);
+        setActiveSecond(item);
         const machinesIds = await loadListeOperations(item.id);
-        const operations = await Promise.all(machinesIds.map(async (op) => await loadOperationById(op.id_operation)));
+        const operations = await Promise.all(machinesIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
         setSecondData(operations);
     };
 
+    const handleSecondItemClick = async (item) => {
+        console.log(item)
+        setActiveSecond(item);
+    };
+
     const openModal = (item = null) => {
-        setActiveGamme(item);
+        setActiveFirst(item);
         setShowModal(true);
     };
 
@@ -128,11 +135,10 @@ const DataLoader = () => {
             case "addUnassignedOperation":
                 setActionModal("addUnassignedOperation");
                 try {
-                    console.log(item)
                     const optionsValues = await loadUnassignedListeOperations(item);
 
                     const unassignedOperations = await Promise.all(
-                        optionsValues.map(async (operation) => await loadOperationById(operation.id_operation))
+                        optionsValues.map(async (operation) => await loadOperationById(operation.id_operation, operation.id_liste_operation))
                     );
 
                     const filteredOperations = unassignedOperations.filter(operation => operation !== null);
@@ -141,7 +147,6 @@ const DataLoader = () => {
                         value: option.id,
                         label: option.title
                     }));
-                    console.log(options)
 
                     setModalSetterInput({
                         operation: { type: "select", options }
@@ -173,7 +178,7 @@ const DataLoader = () => {
         }
     };
 
-    const handleActionWithModal = async (id = null) => {
+    const handleActionWithModal = async (idf = null, ids = null) => {
         let newItem = {};
         switch (actionModal) {
             case "addGamme":
@@ -193,26 +198,24 @@ const DataLoader = () => {
                 closeModal();
                 break;
             case "delGamme":
-                await DeleteGamme(id);
+                await DeleteGamme(idf);
                 loadGammes().then(setFirstData);
                 closeModal();
                 break;
             case "addUnassignedOperation":
-                if (!inputValues.title || !inputValues.description) {
-                    setError("Les champs Titre et Description doivent être remplis.");
-                    return;
-                }
                 newItem = {
                     title: inputValues.title,
                     description: inputValues.description
                 };
-                await AddOperation(newItem);
+                await AddAssignementOperation(newItem);
                 //loadOperations().then(setFirstData);
                 closeModal();
                 break;
             case "delAssignedOperation":
-                await DeleteAssignedOperation(id);
-                //loadOperations().then(setFirstData);
+                await DeleteAssignedOperation(ids);
+                const operationsIds = await loadListeOperations(idf);
+                const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
+                setSecondData(operations);
                 closeModal();
                 break;
             default:
@@ -230,7 +233,7 @@ const DataLoader = () => {
                 closeModal();
                 break;
             case "delPoste":
-                await DeletePoste(id);
+                await DeletePoste(idf);
                 loadPostes().then(setFirstData);
                 closeModal();
                 break;
@@ -249,7 +252,7 @@ const DataLoader = () => {
                         onButtonClick={getOnClickAction}
                         onSearch={handleFirstSearch}
                         firstTitle={firstTitle}
-                        activeItemId={activeGamme?.id}
+                        activeItemId={activeFirst?.id}
                     />
                 </Column>
                 <Column>
@@ -257,10 +260,10 @@ const DataLoader = () => {
                         action={action}
                         secondTitle={secondTitle}
                         items={filteredSecond.length ? filteredSecond : secondData}
-                        onItemClick={handleGammeItemClick}
+                        onItemClick={handleSecondItemClick}
                         onButtonClick={getOnClickAction}
                         onSearch={handleSecondeSearch}
-                        activeItemId={activeGamme?.id}
+                        activeItemId={activeSecond?.id}
                     />
                 </Column>
             </TwoColumn>
@@ -269,7 +272,7 @@ const DataLoader = () => {
                 isOpen={showModal}
                 onRequestClose={closeModal}
                 modalTitle={actionModal.includes("del") ? "Confirmation" : "Ajouter"}
-                handleAdd={() => handleActionWithModal(activeGamme?.id)}
+                handleAdd={() => handleActionWithModal(activeFirst?.id, activeSecond?.id)}
                 modalInputs={modalSetterInput}
                 inputValues={inputValues}
                 setInputValues={setInputValues}

@@ -20,7 +20,8 @@ const SecondListComponent = ({
                                  onSearch,
                                  secondTitle,
                                  onButtonClick,
-                                 activeItemId
+                                 activeItemId,
+                                 onItemClick
                              }) => {
     const [activeSecondeIndex, setActiveSecondeIndex] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
@@ -81,7 +82,10 @@ const SecondListComponent = ({
                 items.map((item, index) => (
                     <SEC
                         key={index}
-                        onClick={() => toggleSeconde(index)}
+                        onClick={() =>
+                        {toggleSeconde(index);
+                        onItemClick(item);
+                        }}
                         className="group"
                     >
                         <Seconde>
@@ -93,6 +97,7 @@ const SecondListComponent = ({
                                 <DeleteButton
                                     onClick={e => {
                                         e.stopPropagation();
+                                        onItemClick(item);
                                         onButtonClick(buttonActionDel, item);
                                     }}
                                 >
