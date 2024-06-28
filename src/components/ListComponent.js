@@ -90,6 +90,7 @@ const ListComponent = ({
                             <DeleteButton
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    onItemClick(item);
                                     onButtonClick(buttonActionDel, item);
                                 }}
                             >

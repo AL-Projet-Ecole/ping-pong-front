@@ -15,9 +15,41 @@ export const loadMachines = async () => {
     }
 };
 
-export const loadListeMachines = async (id_post) => {
+export const loadMachineById = async (id_machine, id_poste_machine = null) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/postMachines/listMachine/' + id_post);
+        const response = await fetch('http://127.0.0.1:3333/machines/' + id_machine);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement de la machine');
+        }
+        const data = await response.json();
+        return {
+            id : id_poste_machine,
+            title: data.libelle_machine,
+            idM: data.id_machine,
+        };
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
+export const loadUnassignedListeMachines = async (id_poste) => {
+    try {
+        const response = await fetch('http://127.0.0.1:3333/postMachines/Unassigned/' + id_poste);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des machines du poste de travail');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+};
+
+export const loadListeMachines = async (id_poste) => {
+    try {
+        const response = await fetch('http://127.0.0.1:3333/postMachines/listMachine/' + id_poste);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des machines du poste');
         }
@@ -29,14 +61,87 @@ export const loadListeMachines = async (id_post) => {
     }
 };
 
-export async function AddMachine(libelle_machine){
-    return fetch('https://dummyjson.com/machines', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            libelle_machine: {libelle_machine}
-        })
-    })
-        .then(res => res.json())
-        .then(console.log);
+export async function AddAssignementMachine(listMachineData) {
+    const { idPoste, idMac } = listMachineData;
+
+    try {
+        const response = await fetch('http://127.0.0.1:3333/postMachines/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_poste: idPoste,
+                id_machine: idMac,
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Assignation d'une machine ajoutée");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de l'assignation d'une machine :", error.message);
+        throw error;
+    }
+}
+
+export async function DeleteAssignedMachine(id_poste_machine){
+    try {
+        const response = await fetch(`http://127.0.0.1:3333/postMachines/${id_poste_machine}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+
+        console.log(`Operation assigné avec l'ID ${id_poste_machine} supprimée avec succès`);
+    } catch (error) {
+        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        throw error;
+    }
+}
+
+export async function AddMachine(machineData) {
+    const { libelle_machine } = machineData;
+
+    try {
+        const response = await fetch('http://127.0.0.1:3333/machines/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                libelle_machine
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Nouvelle machine ajoutée");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de la machine :", error.message);
+        throw error;
+    }
+}
+
+export async function DeleteMachine(id_machine){
+    try {
+        const response = await fetch(`http://127.0.0.1:3333/machines/${id_machine}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+
+        console.log(`Machine avec l'ID ${id_machine} supprimée avec succès`);
+    } catch (error) {
+        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        throw error;
+    }
 }

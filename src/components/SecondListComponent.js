@@ -49,8 +49,8 @@ const SecondListComponent = ({
                 setButtonActionDel("delAssignedOperation");
                 break;
             case "poste":
-                setButtonActionAdd("addMachine");
-                setButtonActionDel("delMachine");
+                setButtonActionAdd("addUnassignedMachine");
+                setButtonActionDel("delAssignedMachine");
                 break;
             case "realisation":
                 setButtonActionAdd("addRealisation");

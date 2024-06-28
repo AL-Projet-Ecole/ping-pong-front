@@ -67,18 +67,32 @@ export const loadUnassignedListeOperations = async (id_gamme) => {
     }
 };
 
-export async function AddAssignementOperation(id_gamme, id_operation){
-    return fetch('http://127.0.0.1:3333/listeOperations/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id_gamme: {id_gamme},
-            id_operation: {id_operation},
-        })
-    })
-        .then(res => res.json())
-        .then(console.log);
+export async function AddAssignementOperation(listOperationData) {
+    const { idGamme, idOp } = listOperationData;
+
+    try {
+        console.log(idGamme, idOp)
+        const response = await fetch('http://127.0.0.1:3333/listeOperations/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_gamme: idGamme,
+                id_operation: idOp,
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Assignation d'opération ajoutée");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de l'assignation d'opération :", error.message);
+        throw error;
+    }
 }
+
 
 export async function DeleteAssignedOperation(id_liste_operation){
     try {
@@ -98,19 +112,32 @@ export async function DeleteAssignedOperation(id_liste_operation){
     }
 }
 
-export async function AddOperation(id_machine, libelle_operation, temps_estimation){
-    return fetch('http://127.0.0.1:3333/operations/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id_machine: {id_machine},
-            libelle_operation: {libelle_operation},
-            temps_estimation: {temps_estimation}
-        })
-    })
-        .then(res => res.json())
-        .then(console.log);
+export async function AddOperation(operationData) {
+    const { id_machine, libelle_operation, temps_estimation } = operationData;
+
+    try {
+        const response = await fetch('http://127.0.0.1:3333/operations/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_machine,
+                libelle_operation,
+                temps_estimation
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Nouvelle opération ajoutée");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de l'opération :", error.message);
+        throw error;
+    }
 }
+
 
 export async function DeleteOperation(id_operation){
     try {

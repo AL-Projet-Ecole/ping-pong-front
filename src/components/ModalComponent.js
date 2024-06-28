@@ -1,4 +1,5 @@
 import React from "react";
+import Select from 'react-select';
 import {
     Modal,
     ModalBody,
@@ -28,44 +29,57 @@ const ModalComponent = ({
             const inputConfig = modalInputs[key];
             const value = inputValues[key] || "";
 
+            if (inputConfig.type === "hidden") {
+                return (
+                    <div key={index} style={{ display: 'none' }}>
+                        <Input
+                            type="hidden"
+                            value={value}
+                            onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
+                        />
+                    </div>
+                );
+            }
+
             if (inputConfig.type === "textarea") {
                 return (
-                    <Textarea
-                        key={index}
-                        placeholder={inputConfig.placeholder}
-                        value={value}
-                        onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
-                    />
+                    <div key={index} style={{ marginBottom: '15px' }}>
+                        <Textarea
+                            placeholder={inputConfig.placeholder}
+                            value={value}
+                            onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
+                        />
+                    </div>
                 );
             }
 
             if (inputConfig.type === "select") {
                 return (
-                    <select
-                        key={index}
-                        value={value}
-                        onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
-                    >
-                        {inputConfig.options.map((option, idx) => (
-                            <option key={idx} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                    <div key={index} style={{ marginBottom: '15px' }}>
+                        <Select
+                            value={inputConfig.options.find(option => option.value === value)}
+                            onChange={(selectedOption) => setInputValues(prev => ({ ...prev, [key]: selectedOption ? selectedOption.value : '' }))}
+                            options={inputConfig.options}
+                            placeholder={inputConfig.placeholder}
+                            isSearchable={true}
+                        />
+                    </div>
                 );
             }
 
             return (
-                <Input
-                    key={index}
-                    type={inputConfig.type || "text"}
-                    placeholder={inputConfig.placeholder}
-                    value={value}
-                    onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
-                />
+                <div key={index} style={{ marginBottom: '15px' }}>
+                    <Input
+                        type={inputConfig.type || "text"}
+                        placeholder={inputConfig.placeholder}
+                        value={value}
+                        onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
+                    />
+                </div>
             );
         });
     };
+
 
     return (
         <Modal
@@ -84,14 +98,15 @@ const ModalComponent = ({
                     position: "static",
                     inset: "auto",
                     padding: "20px",
-                    maxWidth: "500px",
+                    maxWidth: "1250px",
                     borderRadius: "8px",
-                    margin: "auto"
+                    margin: "auto",
+                    width: "40%",
                 }
             }}
         >
             <ModalContainer>
-                <ModalTitle>{modalTitle}</ModalTitle>
+                <ModalTitle style={{ marginBottom: '20px' }}>{modalTitle}</ModalTitle>
                 <ModalBody>
                     {actionModal.includes("del") ? (
                         <p>Êtes-vous sûr de vouloir supprimer cette {actionModal.split("del")[1].toLowerCase()} ?</p>
