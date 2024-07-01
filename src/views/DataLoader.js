@@ -8,7 +8,9 @@ import {
     DeleteMachine,
     loadListeMachines,
     loadMachineById,
-    loadUnassignedListeMachines, AddAssignementMachine, DeleteAssignedMachine
+    loadUnassignedListeMachines,
+    AddAssignementMachine,
+    DeleteAssignedMachine
 } from "../models/MachineModel";
 import {
     loadOperations,
@@ -17,10 +19,12 @@ import {
     loadOperationById,
     loadUnassignedListeOperations,
     AddAssignementOperation,
-    DeleteAssignedOperation, DeleteOperation
+    DeleteAssignedOperation,
+    DeleteOperation
 } from "../models/OperationModel";
 import ListComponent from "../components/ListComponent";
 import SecondListComponent from "../components/SecondListComponent";
+import DetailComponent from "../components/DetailComponent";
 import ModalComponent from "../components/ModalComponent";
 import { Container, Content } from "../components/CommonStyledComponents";
 import { toast, ToastContainer } from 'react-toastify';
@@ -45,7 +49,7 @@ const DataLoader = () => {
     const [actionModal, setActionModal] = useState("");
 
     const [secondData, setSecondData] = useState([]);
-    const [secondTitle, setSecondTitle] = useState([]);
+    const [secondTitle, setSecondTitle] = useState(null);
     const [activeSecond, setActiveSecond] = useState(null);
     const [filteredSecond, setFilteredSecond] = useState([]);
 
@@ -60,19 +64,19 @@ const DataLoader = () => {
             case "/Operations":
                 setAction("operation");
                 setFirstTitle("Opérations");
-                setSecondTitle("Détails");
+                setSecondTitle(null);
                 loadOperations().then(setFirstData);
                 break;
             case "/Machines":
                 setAction("machine");
                 setFirstTitle("Machines");
-                setSecondTitle("Détails");
+                setSecondTitle(null);
                 loadMachines().then(setFirstData);
                 break;
             case "/Realisations":
                 setAction("realisation");
                 setFirstTitle("Réalisations");
-                setSecondTitle("Détails");
+                setSecondTitle(null);
                 // loadRealisations().then(setFirstData);
                 break;
             case "/Postes":
@@ -123,12 +127,12 @@ const DataLoader = () => {
     };
 
     const handleFirstItemClick = async (item) => {
-        console.log(item)
+        console.log(item);
         setActiveFirst(item);
     };
 
     const handleSecondItemClick = async (item) => {
-        console.log(item)
+        console.log(item);
         setActiveSecond(item);
     };
 
@@ -176,7 +180,7 @@ const DataLoader = () => {
                         idGamme: { type: "hidden", value: item },
                         operation: { type: "select", options, placeholder: "Selection d'une opération" }
                     });
-                    if (item === undefined){
+                    if (item === undefined) {
                         toast.error("Veuillez sélectionner une gamme d'abord.");
                         return;
                     }
@@ -222,7 +226,7 @@ const DataLoader = () => {
                         idPoste: { type: "hidden", value: item },
                         operation: { type: "select", options, placeholder: "Selection d'une machine." }
                     });
-                    if (item === undefined){
+                    if (item === undefined) {
                         toast.error("Veuillez sélectionner un poste de travail d'abord.");
                         return;
                     }
@@ -289,13 +293,13 @@ const DataLoader = () => {
                 await AddGamme(newItem);
                 loadGammes().then(setFirstData);
                 closeModal();
-                toast.success("La gamme à bien été crée.")
+                toast.success("La gamme à bien été crée.");
                 break;
             case "delGamme":
                 await DeleteGamme(idf);
                 loadGammes().then(setFirstData);
                 closeModal();
-                toast.success("La gamme à bien été supprimée.")
+                toast.success("La gamme à bien été supprimée.");
                 break;
             case "addUnassignedOperation":
                 newItem = {
@@ -307,7 +311,7 @@ const DataLoader = () => {
                 const operationsadd = await Promise.all(operationsIdsadd.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
                 setSecondData(operationsadd);
                 closeModal();
-                toast.success("La relation entre la gamme et l'opération à bien été crée.")
+                toast.success("La relation entre la gamme et l'opération à bien été crée.");
                 break;
             case "delAssignedOperation":
                 await DeleteAssignedOperation(ids);
@@ -315,7 +319,7 @@ const DataLoader = () => {
                 const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
                 setSecondData(operations);
                 closeModal();
-                toast.success("La relation entre la gamme et l'opération à bien été supprimée.")
+                toast.success("La relation entre la gamme et l'opération à bien été supprimée.");
                 break;
             case "addPoste":
                 if (!inputValues.libelle_poste) {
@@ -328,26 +332,26 @@ const DataLoader = () => {
                 await AddPoste(newItem);
                 loadPostes().then(setFirstData);
                 closeModal();
-                toast.success("Le poste de travail à bien été crée.")
+                toast.success("Le poste de travail à bien été crée.");
                 break;
             case "delPoste":
                 await DeletePoste(idf);
                 loadPostes().then(setFirstData);
                 closeModal();
-                toast.success("Le poste de travail à bien été supprimé.")
+                toast.success("Le poste de travail à bien été supprimé.");
                 break;
             case "addUnassignedMachine":
                 newItem = {
                     idPoste: activeFirstId,
                     idMac: inputValues.operation
                 };
-                console.log(newItem)
+                console.log(newItem);
                 await AddAssignementMachine(newItem);
                 const machinesIdsadd = await loadListeMachines(activeFirstId);
                 const machinesadd = await Promise.all(machinesIdsadd.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
                 setSecondData(machinesadd);
                 closeModal();
-                toast.success("La relation entre le poste de travail et la machine à bien été crée.")
+                toast.success("La relation entre le poste de travail et la machine à bien été crée.");
                 break;
             case "delAssignedMachine":
                 await DeleteAssignedMachine(ids);
@@ -355,7 +359,7 @@ const DataLoader = () => {
                 const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
                 setSecondData(machines);
                 closeModal();
-                toast.success("La relation entre le poste de travail et la machine à bien été supprimée.")
+                toast.success("La relation entre le poste de travail et la machine à bien été supprimée.");
                 break;
             case "addOperation":
                 if (!inputValues.libelle_operation && !inputValues.temps_estimation) {
@@ -370,13 +374,13 @@ const DataLoader = () => {
                 await AddOperation(newItem);
                 loadOperations().then(setFirstData);
                 closeModal();
-                toast.success("L'opération à bien été crée.")
+                toast.success("L'opération à bien été crée.");
                 break;
             case "delOperation":
                 await DeleteOperation(idf);
                 loadOperations().then(setFirstData);
                 closeModal();
-                toast.success("L'opération à bien été supprimée.")
+                toast.success("L'opération à bien été supprimée.");
                 break;
             case "addMachine":
                 if (!inputValues.libelle_machine) {
@@ -389,13 +393,13 @@ const DataLoader = () => {
                 await AddMachine(newItem);
                 loadMachines().then(setFirstData);
                 closeModal();
-                toast.success("La machine à bien été crée.")
+                toast.success("La machine à bien été crée.");
                 break;
             case "delMachine":
                 await DeleteMachine(idf);
                 loadMachines().then(setFirstData);
                 closeModal();
-                toast.success("La machine à bien été supprimée.")
+                toast.success("La machine à bien été supprimée.");
                 break;
         }
     };
@@ -417,15 +421,27 @@ const DataLoader = () => {
                         />
                     </Column>
                     <Column>
-                        <SecondListComponent
-                            action={action}
-                            secondTitle={secondTitle}
-                            items={filteredSecond.length ? filteredSecond : secondData}
-                            onItemClick={handleSecondItemClick}
-                            onButtonClick={getOnClickAction}
-                            onSearch={handleSecondeSearch}
-                            activeItemId={activeFirst?.id}
-                        />
+                        {secondTitle && (
+                            <SecondListComponent
+                                action={action}
+                                secondTitle={secondTitle}
+                                items={filteredSecond.length ? filteredSecond : secondData}
+                                onItemClick={handleSecondItemClick}
+                                onButtonClick={getOnClickAction}
+                                onSearch={handleSecondeSearch}
+                                activeItemId={activeFirst?.id}
+                            />
+                        )}
+                        {action !== "gamme" && (
+                            <DetailComponent
+                                action={action}
+                                activeItemId={activeFirst?.id}
+                                activeItemDescription={activeFirst?.description}
+                                activeItemQuantite={activeFirst?.quantite}
+                                activeItemPrix={activeFirst?.prix}
+                                activeItemProvenance={activeFirst?.provenance}
+                            />
+                        )}
                     </Column>
                 </TwoColumn>
             </Content>

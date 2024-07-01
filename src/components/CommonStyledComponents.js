@@ -14,7 +14,7 @@ export const FirstContainer = tw.div`mt-12 flex flex-col lg:flex-1 lg:overflow-y
 export const Post = tw(motion.a)`flex-shrink-0 block cursor-pointer mb-16 last:mb-0 sm:mb-0 sm:odd:mr-8 lg:mr-8 xl:mr-16`;
 export const Title = tw.h5`mt-6 text-xl font-bold transition duration-300 group-hover:text-primary-500`;
 export const AuthorName = tw.h6`font-semibold text-lg`;
-export const PostTextContainer = tw.div`flex justify-center`;
+export const TextContainer = tw.div`flex justify-center`;
 
 // Definition de l'image
 export const Image = styled.div(props => [
