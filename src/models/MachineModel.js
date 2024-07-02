@@ -7,7 +7,9 @@ export const loadMachines = async () => {
         const data = await response.json();
         return data.map(machine => ({
             id: machine.id_machine,
-            title: machine.libelle_machine
+            title: machine.libelle_machine,
+            createdAt : machine.createdAt,
+            updatedAt : machine.updatedAt
         }));
     } catch (error) {
         console.error(error);
@@ -82,6 +84,30 @@ export async function AddAssignementMachine(listMachineData) {
         console.log("Assignation d'une machine ajoutée");
     } catch (error) {
         console.error("Erreur lors de l'ajout de l'assignation d'une machine :", error.message);
+        throw error;
+    }
+}
+
+export async function UpdateMachine(machineData) {
+    const { id, libelle } = machineData;
+    try {
+        const response = await fetch(`http://127.0.0.1:3333/machines/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_machine: id,
+                libelle_machine: libelle
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Le poste de travail a bien été mis à jour ");
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du poste de travail :", error.message);
         throw error;
     }
 }

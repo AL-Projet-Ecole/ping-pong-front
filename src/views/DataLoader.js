@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { loadGammes, AddGamme, DeleteGamme } from "../models/GammeModel";
-import { loadPostes, AddPoste, DeletePoste } from "../models/PosteModel";
+import { loadRealisations, AddRealisation, DeleteRealisation } from "../models/RealisationModel";
+import { loadPostes, AddPoste, DeletePoste, UpdatePoste } from "../models/PosteModel";
 import {
     loadMachines,
     AddMachine,
     DeleteMachine,
+    UpdateMachine,
     loadListeMachines,
     loadMachineById,
     loadUnassignedListeMachines,
@@ -15,12 +17,13 @@ import {
 import {
     loadOperations,
     AddOperation,
+    UpdateOperation,
+    DeleteOperation,
     loadListeOperations,
     loadOperationById,
     loadUnassignedListeOperations,
     AddAssignementOperation,
     DeleteAssignedOperation,
-    DeleteOperation
 } from "../models/OperationModel";
 import ListComponent from "../components/ListComponent";
 import SecondListComponent from "../components/SecondListComponent";
@@ -53,6 +56,8 @@ const DataLoader = () => {
     const [activeSecond, setActiveSecond] = useState(null);
     const [filteredSecond, setFilteredSecond] = useState([]);
 
+    const [updatedData, setUpdatedData] = useState(null);
+
     useEffect(() => {
         switch (location.pathname) {
             case "/Gammes":
@@ -77,7 +82,7 @@ const DataLoader = () => {
                 setAction("realisation");
                 setFirstTitle("Réalisations");
                 setSecondTitle(null);
-                // loadRealisations().then(setFirstData);
+                loadRealisations().then(setFirstData);
                 break;
             case "/Postes":
                 setAction("poste");
@@ -207,6 +212,12 @@ const DataLoader = () => {
                 setActionModal("delPoste");
                 openModal(item);
                 break;
+            case "updtPoste":
+                await UpdatePoste(item);
+                loadPostes().then(setFirstData);
+                setUpdatedData(item);
+                toast.success("La mise à jour du poste de travail a bien été effectuée.");
+                break;
             case "addUnassignedMachine":
                 setActionModal("addUnassignedMachine");
                 try {
@@ -240,6 +251,12 @@ const DataLoader = () => {
                 setActionModal("delAssignedMachine");
                 openModal(item);
                 break;
+            case "updtMachine":
+                await UpdateMachine(item);
+                loadMachines().then(setFirstData);
+                setUpdatedData(item);
+                toast.success("La mise à jour de la machine a bien été effectuée.");
+                break;
             case "addOperation":
                 setActionModal("addOperation");
                 try {
@@ -265,6 +282,12 @@ const DataLoader = () => {
                 setActionModal("delOperation");
                 openModal(item);
                 break;
+            case "updtOperation":
+                await UpdateOperation(item);
+                loadOperations().then(setFirstData);
+                setUpdatedData(item);
+                toast.success("La mise à jour de l'opération a bien été effectuée.");
+                break;
             case "addMachine":
                 setActionModal("addMachine");
                 setModalSetterInput({
@@ -276,11 +299,20 @@ const DataLoader = () => {
                 setActionModal("delMachine");
                 openModal(item);
                 break;
+            case "addRealisation":
+                setActionModal("addRealisation");
+                // Bonne chance mon meilleur pote (moi même)
+                setModalSetterInput({
+                    libelle_poste: { type: "text", placeholder: "Libelle" }
+                });
+                openModal();
+                break;
         }
     };
 
     const handleActionWithModal = async (idf = null, ids = null) => {
         let newItem = {};
+        // eslint-disable-next-line default-case
         switch (actionModal) {
             case "addGamme":
                 if (!inputValues.titre_gamme) {
@@ -401,6 +433,20 @@ const DataLoader = () => {
                 closeModal();
                 toast.success("La machine à bien été supprimée.");
                 break;
+            case "addRealisation":
+                //Bonne chance le frère (moi même)
+                if (!inputValues.libelle_machine) {
+                    setError("Le nom de la machine doit être renseigné.");
+                    return;
+                }
+                newItem = {
+                    libelle_machine: inputValues.libelle_machine,
+                };
+                await AddMachine(newItem);
+                loadMachines().then(setFirstData);
+                closeModal();
+                toast.success("La machine à bien été crée.");
+                break;
         }
     };
 
@@ -434,12 +480,20 @@ const DataLoader = () => {
                         )}
                         {action !== "gamme" && (
                             <DetailComponent
+                                toast = {toast}
                                 action={action}
+                                onButtonClick={getOnClickAction}
                                 activeItemId={activeFirst?.id}
+                                activeItemLibelle={activeFirst?.title}
                                 activeItemDescription={activeFirst?.description}
                                 activeItemQuantite={activeFirst?.quantite}
                                 activeItemPrix={activeFirst?.prix}
                                 activeItemProvenance={activeFirst?.provenance}
+                                activeItemIDM={activeFirst?.idM}
+                                optionForInputOperation={activeFirst?.idM && loadMachines()}
+                                activeItemCreatedAt={activeFirst?.createdAt}
+                                activeItemUpdatedAt={activeFirst?.updatedAt}
+                                updatedData={updatedData}
                             />
                         )}
                     </Column>

@@ -58,7 +58,7 @@ const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
 `;
 
 export default ({
-                    heading = "Stock",
+                    heading = "Pièces",
                     tabs = {
                         Livrable: [
                             {
