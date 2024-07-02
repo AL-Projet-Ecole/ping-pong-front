@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export const loadOperations = async () => {
     try {
         const response = await fetch('http://127.0.0.1:3333/operations');
@@ -109,9 +111,9 @@ export async function DeleteAssignedOperation(id_liste_operation){
             throw new Error(errorData.message);
         }
 
-        console.log(`Operation assigné avec l'ID ${id_liste_operation} supprimée avec succès`);
+        toast.success("La relation entre la gamme et l'opération à bien été supprimée.");
     } catch (error) {
-        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        toast.error("Erreur lors de la suppression de la relation entre la gamme et l'opération.");
         throw error;
     }
 }
@@ -135,9 +137,9 @@ export async function AddOperation(operationData) {
             throw new Error(errorData.errors[0].msg);
         }
 
-        console.log("Nouvelle opération ajoutée");
+        toast.success("L'opération à bien été crée.");
     } catch (error) {
-        console.error("Erreur lors de l'ajout de l'opération :", error.message);
+        toast.error("Erreur lors de la création de l'opération.");
         throw error;
     }
 }
@@ -161,9 +163,9 @@ export async function UpdateOperation(operationData) {
             throw new Error(errorData.errors[0].msg);
         }
 
-        console.log("L'opération a bien été mise à jour");
+        toast.success("La mise à jour de l'opération a bien été effectuée.");
     } catch (error) {
-        console.error("Erreur lors de la mise à jour de l'opération :", error.message);
+        toast.error("Erreur lors de la mise à jour de l'opération.");
         throw error;
     }
 }
@@ -179,9 +181,13 @@ export async function DeleteOperation(id_operation){
             throw new Error(errorData.message);
         }
 
-        console.log(`Opération avec l'ID ${id_operation} supprimée avec succès`);
+        toast.success("L'opération à bien été supprimée.");
     } catch (error) {
-        console.error("Erreur lors de la suppression de l'opération :", error.message);
+        if (error.message === 'Impossible de supprimer cette opération car elle est référencée par une réalisation.') {
+            toast.error("Impossible de supprimer cette opération car elle est référencée par une réalisation.");
+        } else {
+            toast.error("Erreur lors de la suppression de l'opération.");
+        }
         throw error;
     }
 }

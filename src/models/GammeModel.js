@@ -1,7 +1,9 @@
+import { toast } from 'react-toastify';
 export const loadGammes = async () => {
     try {
         const response = await fetch('http://127.0.0.1:3333/gammes');
         if (!response.ok) {
+            toast.error("Erreur lors du chargement des gammes.");
             throw new Error('Erreur lors du chargement des gammes');
         }
         const data = await response.json();
@@ -40,14 +42,14 @@ export async function AddGamme(gammeData) {
             throw new Error(errorData.errors[0].msg);
         }
 
-        console.log("Nouvelle gamme ajoutée");
+        toast.success("La gamme à bien été crée.");
     } catch (error) {
-        console.error("Erreur lors de l'ajout de la gamme :", error.message);
+        toast.error("Erreur lors de la création de la gamme.");
         throw error;
     }
 }
 
-export async function DeleteGamme(id_gamme){
+export async function DeleteGamme(id_gamme) {
     try {
         const response = await fetch(`http://127.0.0.1:3333/gammes/${id_gamme}`, {
             method: 'DELETE',
@@ -58,9 +60,13 @@ export async function DeleteGamme(id_gamme){
             throw new Error(errorData.message);
         }
 
-        console.log(`Gamme avec l'ID ${id_gamme} supprimée avec succès`);
+        toast.success("La gamme a bien été supprimée.");
     } catch (error) {
-        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        if (error.message === 'Impossible de supprimer cette gamme car elle est référencée par une réalisation.') {
+            toast.error("Impossible de supprimer cette gamme car elle est référencée par une réalisation.");
+        } else {
+            toast.error("Erreur lors de la suppression de la gamme.");
+        }
         throw error;
     }
 }

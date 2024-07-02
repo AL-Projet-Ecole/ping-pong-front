@@ -7,6 +7,7 @@ export const loadRealisations = async () => {
         const data = await response.json();
         return data.map(realisation => ({
             id: realisation.id_realisation,
+            idG: realisation.id_gamme,
             idU: realisation.id_user,
             idO: realisation.id_operation,
             idP: realisation.id_poste,

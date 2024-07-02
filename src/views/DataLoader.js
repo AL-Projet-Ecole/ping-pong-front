@@ -255,7 +255,6 @@ const DataLoader = () => {
                 await UpdateMachine(item);
                 loadMachines().then(setFirstData);
                 setUpdatedData(item);
-                toast.success("La mise à jour de la machine a bien été effectuée.");
                 break;
             case "addOperation":
                 setActionModal("addOperation");
@@ -286,7 +285,6 @@ const DataLoader = () => {
                 await UpdateOperation(item);
                 loadOperations().then(setFirstData);
                 setUpdatedData(item);
-                toast.success("La mise à jour de l'opération a bien été effectuée.");
                 break;
             case "addMachine":
                 setActionModal("addMachine");
@@ -303,7 +301,11 @@ const DataLoader = () => {
                 setActionModal("addRealisation");
                 // Bonne chance mon meilleur pote (moi même)
                 setModalSetterInput({
-                    libelle_poste: { type: "text", placeholder: "Libelle" }
+
+                    idO: { type: "select", placeholder: "Libelle" },
+                    idP: { type: "select", placeholder: "Libelle" },
+                    description: { type: "text", placeholder: "Libelle" },
+                    dateFab: { type: "text", placeholder: "Libelle" },
                 });
                 openModal();
                 break;
@@ -325,13 +327,11 @@ const DataLoader = () => {
                 await AddGamme(newItem);
                 loadGammes().then(setFirstData);
                 closeModal();
-                toast.success("La gamme à bien été crée.");
                 break;
             case "delGamme":
                 await DeleteGamme(idf);
                 loadGammes().then(setFirstData);
                 closeModal();
-                toast.success("La gamme à bien été supprimée.");
                 break;
             case "addUnassignedOperation":
                 newItem = {
@@ -351,7 +351,6 @@ const DataLoader = () => {
                 const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
                 setSecondData(operations);
                 closeModal();
-                toast.success("La relation entre la gamme et l'opération à bien été supprimée.");
                 break;
             case "addPoste":
                 if (!inputValues.libelle_poste) {
@@ -364,13 +363,11 @@ const DataLoader = () => {
                 await AddPoste(newItem);
                 loadPostes().then(setFirstData);
                 closeModal();
-                toast.success("Le poste de travail à bien été crée.");
                 break;
             case "delPoste":
                 await DeletePoste(idf);
                 loadPostes().then(setFirstData);
                 closeModal();
-                toast.success("Le poste de travail à bien été supprimé.");
                 break;
             case "addUnassignedMachine":
                 newItem = {
@@ -383,7 +380,6 @@ const DataLoader = () => {
                 const machinesadd = await Promise.all(machinesIdsadd.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
                 setSecondData(machinesadd);
                 closeModal();
-                toast.success("La relation entre le poste de travail et la machine à bien été crée.");
                 break;
             case "delAssignedMachine":
                 await DeleteAssignedMachine(ids);
@@ -391,7 +387,6 @@ const DataLoader = () => {
                 const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
                 setSecondData(machines);
                 closeModal();
-                toast.success("La relation entre le poste de travail et la machine à bien été supprimée.");
                 break;
             case "addOperation":
                 if (!inputValues.libelle_operation && !inputValues.temps_estimation) {
@@ -406,13 +401,11 @@ const DataLoader = () => {
                 await AddOperation(newItem);
                 loadOperations().then(setFirstData);
                 closeModal();
-                toast.success("L'opération à bien été crée.");
                 break;
             case "delOperation":
                 await DeleteOperation(idf);
                 loadOperations().then(setFirstData);
                 closeModal();
-                toast.success("L'opération à bien été supprimée.");
                 break;
             case "addMachine":
                 if (!inputValues.libelle_machine) {
@@ -425,13 +418,11 @@ const DataLoader = () => {
                 await AddMachine(newItem);
                 loadMachines().then(setFirstData);
                 closeModal();
-                toast.success("La machine à bien été crée.");
                 break;
             case "delMachine":
                 await DeleteMachine(idf);
                 loadMachines().then(setFirstData);
                 closeModal();
-                toast.success("La machine à bien été supprimée.");
                 break;
             case "addRealisation":
                 //Bonne chance le frère (moi même)

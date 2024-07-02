@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export const loadMachines = async () => {
     try {
         const response = await fetch('http://127.0.0.1:3333/machines');
@@ -81,9 +83,9 @@ export async function AddAssignementMachine(listMachineData) {
             throw new Error(errorData.errors[0].msg);
         }
 
-        console.log("Assignation d'une machine ajoutée");
+        toast.success("La relation entre le poste de travail et la machine à bien été crée.");
     } catch (error) {
-        console.error("Erreur lors de l'ajout de l'assignation d'une machine :", error.message);
+        toast.error("Erreur lors de la création de la relation entre le poste de travail et la machine.");
         throw error;
     }
 }
@@ -105,9 +107,9 @@ export async function UpdateMachine(machineData) {
             throw new Error(errorData.errors[0].msg);
         }
 
-        console.log("Le poste de travail a bien été mis à jour ");
+        toast.success("La mise à jour de la machine a bien été effectuée.");
     } catch (error) {
-        console.error("Erreur lors de la mise à jour du poste de travail :", error.message);
+        toast.error("Erreur lors de la mise à jour de la machine.");
         throw error;
     }
 }
@@ -123,9 +125,9 @@ export async function DeleteAssignedMachine(id_poste_machine){
             throw new Error(errorData.message);
         }
 
-        console.log(`Operation assigné avec l'ID ${id_poste_machine} supprimée avec succès`);
+        toast.success("La relation entre le poste de travail et la machine à bien été supprimée.");
     } catch (error) {
-        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        toast.error("Erreur lors de la suppression de la relation entre le poste de travail et la machine.");
         throw error;
     }
 }
@@ -147,9 +149,9 @@ export async function AddMachine(machineData) {
             throw new Error(errorData.errors[0].msg);
         }
 
-        console.log("Nouvelle machine ajoutée");
+        toast.success("La machine à bien été crée.");
     } catch (error) {
-        console.error("Erreur lors de l'ajout de la machine :", error.message);
+        toast.error("Erreur lors de l'ajout de la machine.");
         throw error;
     }
 }
@@ -165,9 +167,13 @@ export async function DeleteMachine(id_machine){
             throw new Error(errorData.message);
         }
 
-        console.log(`Machine avec l'ID ${id_machine} supprimée avec succès`);
+        toast.success("La machine à bien été supprimée.");
     } catch (error) {
-        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        if (error.message === 'Impossible de supprimer cette machine car elle est référencée par une réalisation.') {
+            toast.error("Impossible de supprimer cette machine car elle est référencée par une réalisation.");
+        } else {
+            toast.error("Erreur lors de la suppression de la machine.");
+        }
         throw error;
     }
 }
