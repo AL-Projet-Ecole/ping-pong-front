@@ -8,8 +8,8 @@ import Blog from './views/Blog/Blog';
 import Admin from './views/Admin/AdminUsers'
 import HubAtelier from './views/Atelier/AtelierHub'
 import Gammes from './views/DataLoader'
-import Stock from './views/Atelier/Stock'
-import Realisation from './views/Atelier/Realisation'
+import Pieces from './views/Atelier/Stock'
+import Realisation from './views/DataLoader'
 import Operation from './views/DataLoader'
 import Postes from './views/DataLoader'
 import Machines from './views/DataLoader'
@@ -48,7 +48,7 @@ function App({ location }) {
             <Route path="/admin" element={<Admin tokenManager={tokenManager} token={token} />} />
             <Route path="/HubAtelier" element={<HubAtelier tokenManager={tokenManager} token={token} />} />
             <Route path="/Gammes" element={<Gammes tokenManager={tokenManager} token={token} />} />
-            <Route path="/Stock" element={<Stock tokenManager={tokenManager} token={token} />} />
+            <Route path="/Pieces" element={<Pieces tokenManager={tokenManager} token={token} />} />
             <Route path="/Realisations" element={<Realisation tokenManager={tokenManager} token={token} />} />
             <Route path="/Operations" element={<Operation tokenManager={tokenManager} token={token} />} />
             <Route path="/Postes" element={<Postes tokenManager={tokenManager} token={token} />} />

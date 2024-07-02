@@ -4,7 +4,7 @@ import {
     AddButton,
     DeleteButton,
     Post,
-    PostTextContainer,
+    TextContainer,
     Title,
     GlobalFirstContainer,
     FirstContainer,
@@ -84,12 +84,13 @@ const ListComponent = ({
                             onClick={() => onItemClick(item)}
                             className={`group ${activeItemId === item.id ? "active-gamme" : ""}`}
                         >
-                            <PostTextContainer>
+                            <TextContainer>
                                 <Title>{item.title}</Title>
-                            </PostTextContainer>
+                            </TextContainer>
                             <DeleteButton
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    onItemClick(item);
                                     onButtonClick(buttonActionDel, item);
                                 }}
                             >

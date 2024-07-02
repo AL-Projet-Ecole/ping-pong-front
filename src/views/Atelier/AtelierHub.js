@@ -57,7 +57,7 @@ const DecoratorBlob = styled(SvgDecoratorBlob3)`
 export default () => {
     const cards = [
         { imageSrc: ShieldIconImage, title: "Gammes", link: "/Gammes" },
-        { imageSrc: ReliableIconImage, title: "Stock", link: "/Stock" },
+        { imageSrc: ReliableIconImage, title: "Pièces", link: "/Pieces" },
         { imageSrc: FastIconImage, title: "Réalisations", link: "/Realisations" },
         { imageSrc: FastIconImage, title: "Opérations", link: "/Operations" },
         { imageSrc: ShieldIconImage, title: "Postes", link: "/Postes" },

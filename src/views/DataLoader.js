@@ -1,21 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { loadGammes, AddGamme, DeleteGamme } from "../models/GammeModel";
-import { loadPostes, AddPoste, DeletePoste } from "../models/PosteModel";
-import { loadMachines, loadListeMachines} from "../models/MachineModel";
+import { loadRealisations, AddRealisation, DeleteRealisation } from "../models/RealisationModel";
+import { loadPostes, AddPoste, DeletePoste, UpdatePoste } from "../models/PosteModel";
+import {
+    loadMachines,
+    AddMachine,
+    DeleteMachine,
+    UpdateMachine,
+    loadListeMachines,
+    loadMachineById,
+    loadUnassignedListeMachines,
+    AddAssignementMachine,
+    DeleteAssignedMachine
+} from "../models/MachineModel";
 import {
     loadOperations,
     AddOperation,
+    UpdateOperation,
+    DeleteOperation,
     loadListeOperations,
     loadOperationById,
     loadUnassignedListeOperations,
     AddAssignementOperation,
-    DeleteAssignedOperation, DeleteOperation
+    DeleteAssignedOperation,
 } from "../models/OperationModel";
 import ListComponent from "../components/ListComponent";
 import SecondListComponent from "../components/SecondListComponent";
+import DetailComponent from "../components/DetailComponent";
 import ModalComponent from "../components/ModalComponent";
 import { Container, Content } from "../components/CommonStyledComponents";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import tw from "twin.macro";
 
 const TwoColumn = tw.div`flex flex-col lg:flex-row`;
@@ -27,6 +43,7 @@ const DataLoader = () => {
     const [firstTitle, setFirstTitle] = useState([]);
     const [filteredFirst, setFilteredFirst] = useState([]);
     const [activeFirst, setActiveFirst] = useState(null);
+    const [activeFirstId, setActiveFirstId] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [modalSetterInput, setModalSetterInput] = useState({});
     const [inputValues, setInputValues] = useState({});
@@ -35,9 +52,11 @@ const DataLoader = () => {
     const [actionModal, setActionModal] = useState("");
 
     const [secondData, setSecondData] = useState([]);
-    const [secondTitle, setSecondTitle] = useState([]);
+    const [secondTitle, setSecondTitle] = useState(null);
     const [activeSecond, setActiveSecond] = useState(null);
     const [filteredSecond, setFilteredSecond] = useState([]);
+
+    const [updatedData, setUpdatedData] = useState(null);
 
     useEffect(() => {
         switch (location.pathname) {
@@ -50,20 +69,20 @@ const DataLoader = () => {
             case "/Operations":
                 setAction("operation");
                 setFirstTitle("Opérations");
-                setSecondTitle("Détails");
+                setSecondTitle(null);
                 loadOperations().then(setFirstData);
                 break;
             case "/Machines":
                 setAction("machine");
                 setFirstTitle("Machines");
-                setSecondTitle("Détails");
+                setSecondTitle(null);
                 loadMachines().then(setFirstData);
                 break;
             case "/Realisations":
                 setAction("realisation");
                 setFirstTitle("Réalisations");
-                setSecondTitle("Détails");
-                // loadRealisations().then(setFirstData);
+                setSecondTitle(null);
+                loadRealisations().then(setFirstData);
                 break;
             case "/Postes":
                 setAction("poste");
@@ -84,6 +103,20 @@ const DataLoader = () => {
         setFilteredSecond(secondData.filter(item => item.title.toLowerCase().includes(term.toLowerCase())));
     };
 
+    const handleItemClick = (item) => {
+        switch (action) {
+            case "gamme":
+                handleGammeItemClick(item);
+                break;
+            case "poste":
+                handlePosteItemClick(item);
+                break;
+            default:
+                handleFirstItemClick(item);
+                break;
+        }
+    };
+
     const handleGammeItemClick = async (item) => {
         setActiveFirst(item);
         const operationsIds = await loadListeOperations(item.id);
@@ -92,20 +125,25 @@ const DataLoader = () => {
     };
 
     const handlePosteItemClick = async (item) => {
-        setActiveSecond(item);
-        const machinesIds = await loadListeOperations(item.id);
-        const operations = await Promise.all(machinesIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
-        setSecondData(operations);
+        setActiveFirst(item);
+        const machinesIds = await loadListeMachines(item.id);
+        const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
+        setSecondData(machines);
+    };
+
+    const handleFirstItemClick = async (item) => {
+        console.log(item);
+        setActiveFirst(item);
     };
 
     const handleSecondItemClick = async (item) => {
-        console.log(item)
+        console.log(item);
         setActiveSecond(item);
     };
 
     const openModal = (item = null) => {
-        setActiveFirst(item);
         setShowModal(true);
+        setActiveFirstId(item);
     };
 
     const closeModal = () => {
@@ -119,11 +157,7 @@ const DataLoader = () => {
             case "addGamme":
                 setActionModal("addGamme");
                 setModalSetterInput({
-                    titre_gamme: { type: "text", placeholder: "Titre" },
-                    description_gamme: { type: "textarea", placeholder: "Description" },
-                    quantite_gamme: { type: "number", placeholder: "Quantité" },
-                    prix_gamme: { type: "number", placeholder: "Prix" },
-                    provenance_gamme: { type: "text", placeholder: "Provenance" }
+                    titre_gamme: { type: "text", placeholder: "Titre de la gamme." },
                 });
                 openModal();
                 break;
@@ -142,16 +176,20 @@ const DataLoader = () => {
                     );
 
                     const filteredOperations = unassignedOperations.filter(operation => operation !== null);
-
-                    const options = filteredOperations.map(option => ({
-                        value: option.id,
-                        label: option.title
+                    const options = filteredOperations.map(operation => ({
+                        value: operation.idOp,
+                        label: operation.title
                     }));
 
                     setModalSetterInput({
-                        operation: { type: "select", options }
+                        idGamme: { type: "hidden", value: item },
+                        operation: { type: "select", options, placeholder: "Selection d'une opération" }
                     });
-                    openModal();
+                    if (item === undefined) {
+                        toast.error("Veuillez sélectionner une gamme d'abord.");
+                        return;
+                    }
+                    openModal(item);
                 } catch (error) {
                     console.error("Erreur lors du chargement des opérations non attribuées", error);
                 }
@@ -174,53 +212,138 @@ const DataLoader = () => {
                 setActionModal("delPoste");
                 openModal(item);
                 break;
+            case "updtPoste":
+                await UpdatePoste(item);
+                loadPostes().then(setFirstData);
+                setUpdatedData(item);
+                toast.success("La mise à jour du poste de travail a bien été effectuée.");
+                break;
+            case "addUnassignedMachine":
+                setActionModal("addUnassignedMachine");
+                try {
+                    const optionsValues = await loadUnassignedListeMachines(item);
+
+                    const unassignedMachines = await Promise.all(
+                        optionsValues.map(async (machine) => await loadMachineById(machine.id_machine, machine.id_poste_machine))
+                    );
+
+                    const filteredMachines = unassignedMachines.filter(machine => machine !== null);
+                    const options = filteredMachines.map(machine => ({
+                        value: machine.idM,
+                        label: machine.title
+                    }));
+
+                    setModalSetterInput({
+                        idPoste: { type: "hidden", value: item },
+                        operation: { type: "select", options, placeholder: "Selection d'une machine." }
+                    });
+                    if (item === undefined) {
+                        toast.error("Veuillez sélectionner un poste de travail d'abord.");
+                        return;
+                    }
+                    openModal(item);
+                } catch (error) {
+                    console.error("Erreur lors du chargement des opérations non attribuées", error);
+                }
+                break;
+
+            case "delAssignedMachine":
+                setActionModal("delAssignedMachine");
+                openModal(item);
+                break;
+            case "updtMachine":
+                await UpdateMachine(item);
+                loadMachines().then(setFirstData);
+                setUpdatedData(item);
+                toast.success("La mise à jour de la machine a bien été effectuée.");
+                break;
             case "addOperation":
                 setActionModal("addOperation");
-                setModalSetterInput({
-                    libelle_operation: { type: "text", placeholder: "Intituler" },
-                    temps_estimation: { type: "number", placeholder: "Estimation du temps nécessaire en minutes" }
-                });
-                openModal();
+                try {
+                    const machines = await loadMachines(); // Fonction pour charger toutes les machines
+
+                    const options = machines.map(machine => ({
+                        value: machine.id,
+                        label: machine.title
+                    }));
+
+                    setModalSetterInput({
+                        machine: { type: "select", options, placeholder: "Selection d'une machine" },
+                        libelle_operation: { type: "text", placeholder: "Intituler" },
+                        temps_estimation: { type: "number", placeholder: "Estimation du temps nécessaire en minutes" }
+                    });
+                    openModal();
+                } catch (error) {
+                    console.error("Erreur lors du chargement des machines", error);
+                }
                 break;
+
             case "delOperation":
                 setActionModal("delOperation");
                 openModal(item);
+                break;
+            case "updtOperation":
+                await UpdateOperation(item);
+                loadOperations().then(setFirstData);
+                setUpdatedData(item);
+                toast.success("La mise à jour de l'opération a bien été effectuée.");
+                break;
+            case "addMachine":
+                setActionModal("addMachine");
+                setModalSetterInput({
+                    libelle_machine: { type: "text", placeholder: "Nom de la machine" },
+                });
+                openModal();
+                break;
+            case "delMachine":
+                setActionModal("delMachine");
+                openModal(item);
+                break;
+            case "addRealisation":
+                setActionModal("addRealisation");
+                // Bonne chance mon meilleur pote (moi même)
+                setModalSetterInput({
+                    libelle_poste: { type: "text", placeholder: "Libelle" }
+                });
+                openModal();
                 break;
         }
     };
 
     const handleActionWithModal = async (idf = null, ids = null) => {
         let newItem = {};
+        // eslint-disable-next-line default-case
         switch (actionModal) {
             case "addGamme":
-                if (!inputValues.titre_gamme || !inputValues.description_gamme) {
-                    setError("Les champs Titre et Description doivent être remplis.");
+                if (!inputValues.titre_gamme) {
+                    setError("Le champ Titre doit être remplis.");
                     return;
                 }
                 newItem = {
-                    titre_gamme: inputValues.titre_gamme,
-                    description_gamme: inputValues.description_gamme,
-                    quantite_gamme: inputValues.quantite_gamme,
-                    prix_gamme: inputValues.prix_gamme,
-                    provenance_gamme: inputValues.provenance_gamme,
+                    titre_gamme: inputValues.titre_gamme
                 };
                 await AddGamme(newItem);
                 loadGammes().then(setFirstData);
                 closeModal();
+                toast.success("La gamme à bien été crée.");
                 break;
             case "delGamme":
                 await DeleteGamme(idf);
                 loadGammes().then(setFirstData);
                 closeModal();
+                toast.success("La gamme à bien été supprimée.");
                 break;
             case "addUnassignedOperation":
                 newItem = {
-                    title: inputValues.title,
-                    description: inputValues.description
+                    idGamme: activeFirstId,
+                    idOp: inputValues.operation
                 };
                 await AddAssignementOperation(newItem);
-                //loadOperations().then(setFirstData);
+                const operationsIdsadd = await loadListeOperations(activeFirstId);
+                const operationsadd = await Promise.all(operationsIdsadd.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
+                setSecondData(operationsadd);
                 closeModal();
+                toast.success("La relation entre la gamme et l'opération à bien été crée.");
                 break;
             case "delAssignedOperation":
                 await DeleteAssignedOperation(ids);
@@ -228,8 +351,7 @@ const DataLoader = () => {
                 const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
                 setSecondData(operations);
                 closeModal();
-                break;
-            default:
+                toast.success("La relation entre la gamme et l'opération à bien été supprimée.");
                 break;
             case "addPoste":
                 if (!inputValues.libelle_poste) {
@@ -242,11 +364,34 @@ const DataLoader = () => {
                 await AddPoste(newItem);
                 loadPostes().then(setFirstData);
                 closeModal();
+                toast.success("Le poste de travail à bien été crée.");
                 break;
             case "delPoste":
                 await DeletePoste(idf);
                 loadPostes().then(setFirstData);
                 closeModal();
+                toast.success("Le poste de travail à bien été supprimé.");
+                break;
+            case "addUnassignedMachine":
+                newItem = {
+                    idPoste: activeFirstId,
+                    idMac: inputValues.operation
+                };
+                console.log(newItem);
+                await AddAssignementMachine(newItem);
+                const machinesIdsadd = await loadListeMachines(activeFirstId);
+                const machinesadd = await Promise.all(machinesIdsadd.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
+                setSecondData(machinesadd);
+                closeModal();
+                toast.success("La relation entre le poste de travail et la machine à bien été crée.");
+                break;
+            case "delAssignedMachine":
+                await DeleteAssignedMachine(ids);
+                const machinesIds = await loadListeMachines(idf);
+                const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
+                setSecondData(machines);
+                closeModal();
+                toast.success("La relation entre le poste de travail et la machine à bien été supprimée.");
                 break;
             case "addOperation":
                 if (!inputValues.libelle_operation && !inputValues.temps_estimation) {
@@ -254,49 +399,105 @@ const DataLoader = () => {
                     return;
                 }
                 newItem = {
-                    id_machine: inputValues.id_machine,
+                    id_machine: inputValues.machine,
                     libelle_operation: inputValues.libelle_operation,
                     temps_estimation: inputValues.temps_estimation
                 };
                 await AddOperation(newItem);
                 loadOperations().then(setFirstData);
                 closeModal();
+                toast.success("L'opération à bien été crée.");
                 break;
             case "delOperation":
                 await DeleteOperation(idf);
                 loadOperations().then(setFirstData);
                 closeModal();
+                toast.success("L'opération à bien été supprimée.");
+                break;
+            case "addMachine":
+                if (!inputValues.libelle_machine) {
+                    setError("Le nom de la machine doit être renseigné.");
+                    return;
+                }
+                newItem = {
+                    libelle_machine: inputValues.libelle_machine,
+                };
+                await AddMachine(newItem);
+                loadMachines().then(setFirstData);
+                closeModal();
+                toast.success("La machine à bien été crée.");
+                break;
+            case "delMachine":
+                await DeleteMachine(idf);
+                loadMachines().then(setFirstData);
+                closeModal();
+                toast.success("La machine à bien été supprimée.");
+                break;
+            case "addRealisation":
+                //Bonne chance le frère (moi même)
+                if (!inputValues.libelle_machine) {
+                    setError("Le nom de la machine doit être renseigné.");
+                    return;
+                }
+                newItem = {
+                    libelle_machine: inputValues.libelle_machine,
+                };
+                await AddMachine(newItem);
+                loadMachines().then(setFirstData);
+                closeModal();
+                toast.success("La machine à bien été crée.");
                 break;
         }
     };
 
     return (
         <Container>
+            <ToastContainer />
             <Content>
-            <TwoColumn>
-                <Column>
-                    <ListComponent
-                        action={action}
-                        items={filteredFirst.length > 0 ? filteredFirst : firstData}
-                        onItemClick={handleGammeItemClick}
-                        onButtonClick={getOnClickAction}
-                        onSearch={handleFirstSearch}
-                        firstTitle={firstTitle}
-                        activeItemId={activeFirst?.id}
-                    />
-                </Column>
-                <Column>
-                    <SecondListComponent
-                        action={action}
-                        secondTitle={secondTitle}
-                        items={filteredSecond.length ? filteredSecond : secondData}
-                        onItemClick={handleSecondItemClick}
-                        onButtonClick={getOnClickAction}
-                        onSearch={handleSecondeSearch}
-                        activeItemId={activeSecond?.id}
-                    />
-                </Column>
-            </TwoColumn>
+                <TwoColumn>
+                    <Column>
+                        <ListComponent
+                            action={action}
+                            items={filteredFirst.length > 0 ? filteredFirst : firstData}
+                            onItemClick={handleItemClick}
+                            onButtonClick={getOnClickAction}
+                            onSearch={handleFirstSearch}
+                            firstTitle={firstTitle}
+                            activeItemId={activeFirst?.id}
+                        />
+                    </Column>
+                    <Column>
+                        {secondTitle && (
+                            <SecondListComponent
+                                action={action}
+                                secondTitle={secondTitle}
+                                items={filteredSecond.length ? filteredSecond : secondData}
+                                onItemClick={handleSecondItemClick}
+                                onButtonClick={getOnClickAction}
+                                onSearch={handleSecondeSearch}
+                                activeItemId={activeFirst?.id}
+                            />
+                        )}
+                        {action !== "gamme" && (
+                            <DetailComponent
+                                toast = {toast}
+                                action={action}
+                                onButtonClick={getOnClickAction}
+                                activeItemId={activeFirst?.id}
+                                activeItemLibelle={activeFirst?.title}
+                                activeItemDescription={activeFirst?.description}
+                                activeItemQuantite={activeFirst?.quantite}
+                                activeItemPrix={activeFirst?.prix}
+                                activeItemProvenance={activeFirst?.provenance}
+                                activeItemIDM={activeFirst?.idM}
+                                optionForInputOperation={activeFirst?.idM && loadMachines()}
+                                activeItemCreatedAt={activeFirst?.createdAt}
+                                activeItemUpdatedAt={activeFirst?.updatedAt}
+                                updatedData={updatedData}
+                            />
+                        )}
+                    </Column>
+                </TwoColumn>
             </Content>
             <ModalComponent
                 isOpen={showModal}

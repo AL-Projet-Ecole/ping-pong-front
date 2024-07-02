@@ -8,6 +8,8 @@ export async function loadPostes() {
         return data.map(poste => ({
             id: poste.id_poste,
             title: poste.libelle_poste,
+            createdAt : poste.createdAt,
+            updatedAt : poste.updatedAt
         }));
     } catch (error) {
         console.error(error);
@@ -40,7 +42,31 @@ export async function AddPoste(posteData) {
     }
 }
 
-export const loadListePosts = async (id_post) => {
+export async function UpdatePoste(posteData) {
+    const { id, libelle } = posteData;
+    try {
+        const response = await fetch(`http://127.0.0.1:3333/postes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_poste: id,
+                libelle_poste: libelle
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Le poste de travail a bien été mis à jour ");
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du poste de travail :", error.message);
+        throw error;
+    }
+}
+
+export const loadListePostes = async (id_post) => {
     try {
         const response = await fetch('http://127.0.0.1:3333/postMachines/listPost/' + id_post);
         if (!response.ok) {

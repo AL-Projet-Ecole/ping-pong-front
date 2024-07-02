@@ -14,7 +14,7 @@ export const FirstContainer = tw.div`mt-12 flex flex-col lg:flex-1 lg:overflow-y
 export const Post = tw(motion.a)`flex-shrink-0 block cursor-pointer mb-16 last:mb-0 sm:mb-0 sm:odd:mr-8 lg:mr-8 xl:mr-16`;
 export const Title = tw.h5`mt-6 text-xl font-bold transition duration-300 group-hover:text-primary-500`;
 export const AuthorName = tw.h6`font-semibold text-lg`;
-export const PostTextContainer = tw.div`flex justify-center`;
+export const TextContainer = tw.div`flex justify-center`;
 
 // Definition de l'image
 export const Image = styled.div(props => [
@@ -43,15 +43,15 @@ export const GlobalFirstContainer = styled.div`
   }
 `;
 
-export const SECContent = tw.div`lg:ml-12`;
+export const SECContent = tw.div`lg:ml-12 mb-12`;
 export const Subheading = tw(SubheadingBase)`mb-4 text-center lg:text-left`;
 export const Heading = styled(SectionHeading)`
   ${tw`lg:text-left flex pr-40 mr-40`}
 `;
 
 export const SecondeContainer = tw.dl`mt-12`;
-export const SEC = tw.div`cursor-pointer mt-8 select-none border lg:border-0 px-8 py-4 lg:p-0 rounded-lg lg:rounded-none`;
-export const Seconde = tw.dt`flex justify-between items-center`;
+export const SEC = tw.div`cursor-pointer mt-8 select-none px-8 py-4 lg:p-0 rounded-lg lg:rounded-none border-b-2`;
+export const Seconde = tw.dt`flex justify-between items-center pb-2`;
 export const SecondeText = tw.span`text-lg lg:text-xl font-semibold`;
 export const SecondeToggleIcon = styled.span`
   ${tw`ml-2 bg-primary-500 text-gray-100 p-1 rounded-full flex items-center justify-center group-hover:bg-primary-700 group-hover:text-gray-200 transition duration-300`}
@@ -71,8 +71,8 @@ export const SearchInput = styled.input`
 
 export const AddButton = styled.button`
   ${tw`ml-4 p-2 rounded-full bg-green-500 text-white flex items-center justify-center`}
-  width: 30px; /* Ajuster la largeur */
-  height: 30px; /* Ajuster la hauteur */
+  width: 30px;
+  height: 30px; 
   &:hover {
     ${tw`bg-green-700`}
   }
@@ -81,16 +81,32 @@ export const AddButton = styled.button`
   }
 `;
 
+export const UpdateButton = styled.button`
+  ${tw`ml-4 p-2 rounded-full bg-blue-500 text-white flex items-center justify-center`}
+  width: 30px; 
+  height: 30px;
+  &:hover {
+    ${tw`bg-blue-700`}
+  }
+  svg {
+    ${tw`w-6 h-6`}
+  }
+`;
+
 export const DeleteButton = styled.button`
-  ${tw`rounded-full bg-red-500 text-white flex items-center justify-center self-center`}
-  width: 30px; /* Ajuster la largeur */
-  height: 30px; /* Ajuster la hauteur */
+  ${tw`rounded-full bg-red-500 text-white flex items-center justify-center self-center mx-2`}
+  width: 30px; 
+  height: 30px; 
   &:hover {
     ${tw`bg-red-700`}
   }
   svg {
-    ${tw`w-5 h-5`} /* Ajuster la taille de l'icône */
+    ${tw`w-4 h-4`} 
   }
+`;
+
+export const ButtonUpdateContainer = styled.div`
+    ${tw`flex justify-end items-center`}
 `;
 
 export const ConfirmationModal = styled(({ className, ...props }) => (
@@ -100,7 +116,6 @@ export const ConfirmationModal = styled(({ className, ...props }) => (
 `;
 
 export const ModalHeader = styled.div`
-  /* Styles de l'en-tête du modal */
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 10px;

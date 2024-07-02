@@ -9,7 +9,9 @@ export const loadOperations = async () => {
             id: operation.id_operation,
             title: operation.libelle_operation,
             description: operation.temps_estimation,
-            idm: operation.id_machine
+            idM: operation.id_machine,
+            createdAt : operation.createdAt,
+            updatedAt : operation.updatedAt
         }));
     } catch (error) {
         console.error(error);
@@ -31,6 +33,8 @@ export const loadOperationById = async (id_operation, id_liste_operation = null)
             title: data.libelle_operation,
             description: data.temps_estimation,
             idM: data.id_machine,
+            createdAt : data.createdAt,
+            updatedAt : data.updatedAt
         };
     } catch (error) {
         console.error(error);
@@ -67,18 +71,32 @@ export const loadUnassignedListeOperations = async (id_gamme) => {
     }
 };
 
-export async function AddAssignementOperation(id_gamme, id_operation){
-    return fetch('http://127.0.0.1:3333/listeOperations/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id_gamme: {id_gamme},
-            id_operation: {id_operation},
-        })
-    })
-        .then(res => res.json())
-        .then(console.log);
+export async function AddAssignementOperation(listOperationData) {
+    const { idGamme, idOp } = listOperationData;
+
+    try {
+        console.log(idGamme, idOp)
+        const response = await fetch('http://127.0.0.1:3333/listeOperations/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_gamme: idGamme,
+                id_operation: idOp,
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Assignation d'opération ajoutée");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de l'assignation d'opération :", error.message);
+        throw error;
+    }
 }
+
 
 export async function DeleteAssignedOperation(id_liste_operation){
     try {
@@ -98,18 +116,56 @@ export async function DeleteAssignedOperation(id_liste_operation){
     }
 }
 
-export async function AddOperation(id_machine, libelle_operation, temps_estimation){
-    return fetch('http://127.0.0.1:3333/operations/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id_machine: {id_machine},
-            libelle_operation: {libelle_operation},
-            temps_estimation: {temps_estimation}
-        })
-    })
-        .then(res => res.json())
-        .then(console.log);
+export async function AddOperation(operationData) {
+    const { id_machine, libelle_operation, temps_estimation } = operationData;
+
+    try {
+        const response = await fetch('http://127.0.0.1:3333/operations/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_machine,
+                libelle_operation,
+                temps_estimation
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("Nouvelle opération ajoutée");
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de l'opération :", error.message);
+        throw error;
+    }
+}
+
+export async function UpdateOperation(operationData) {
+    const { id, libelle, description, idM } = operationData;
+    try {
+        const response = await fetch(`http://127.0.0.1:3333/operations/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_operation:id,
+                id_machine: idM,
+                libelle_operation: libelle,
+                temps_estimation: description
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        console.log("L'opération a bien été mise à jour");
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour de l'opération :", error.message);
+        throw error;
+    }
 }
 
 export async function DeleteOperation(id_operation){
@@ -123,9 +179,9 @@ export async function DeleteOperation(id_operation){
             throw new Error(errorData.message);
         }
 
-        console.log(`Gamme avec l'ID ${id_operation} supprimée avec succès`);
+        console.log(`Opération avec l'ID ${id_operation} supprimée avec succès`);
     } catch (error) {
-        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        console.error("Erreur lors de la suppression de l'opération :", error.message);
         throw error;
     }
 }
