@@ -11,9 +11,33 @@ export const loadGammes = async () => {
             id: gamme.id_gamme,
             title: gamme.titre_gamme,
             description: gamme.description_gamme,
-            quantite: gamme.quantite,
             prix: gamme.prix_gamme,
-            provenance: gamme.provenance_gamme
+            provenance: gamme.provenance_gamme,
+            type: gamme.type_gamme,
+            stock: gamme.stock_gamme
+        }));
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+};
+
+export const loadGammesByType = async (type_gamme) => {
+    try {
+        const response = await fetch('http://127.0.0.1:3333/gammes/type/'+ type_gamme);
+        if (!response.ok) {
+            toast.error("Erreur lors du chargement des gammes.");
+            throw new Error('Erreur lors du chargement des gammes');
+        }
+        const data = await response.json();
+        return data.map(gamme => ({
+            id: gamme.id_gamme,
+            title: gamme.titre_gamme,
+            description: gamme.description_gamme,
+            prix: gamme.prix_gamme,
+            provenance: gamme.provenance_gamme,
+            type: gamme.type_gamme,
+            stock: gamme.stock_gamme
         }));
     } catch (error) {
         console.error(error);
@@ -32,9 +56,10 @@ export const loadGammeById = async (id_gamme) => {
             id: gamme.id_gamme,
             title: gamme.titre_gamme,
             description: gamme.description_gamme,
-            quantite: gamme.quantite,
             prix: gamme.prix_gamme,
-            provenance: gamme.provenance_gamme
+            provenance: gamme.provenance_gamme,
+            type: gamme.type_gamme,
+            stock: gamme.stock_gamme
         };
     } catch (error) {
         console.error(error);
@@ -43,7 +68,7 @@ export const loadGammeById = async (id_gamme) => {
 };
 
 export async function AddGamme(gammeData) {
-    const { titre_gamme, description_gamme, quantite_gamme, prix_gamme, provenance_gamme } = gammeData;
+    const { titre_gamme, description_gamme, prix_gamme, provenance_gamme, type_gamme, stock_gamme } = gammeData;
 
     try {
         const response = await fetch('http://127.0.0.1:3333/gammes', {
@@ -52,9 +77,10 @@ export async function AddGamme(gammeData) {
             body: JSON.stringify({
                 titre_gamme,
                 description_gamme,
-                quantite_gamme,
                 prix_gamme,
-                provenance_gamme
+                provenance_gamme,
+                type_gamme,
+                stock_gamme
             })
         });
 
@@ -100,7 +126,6 @@ export async function DeleteGamme(id_gamme) {
         } else {
             toast.error("Erreur lors de la suppression de la gamme.");
         }
-        throw error;
     }
 }
 
