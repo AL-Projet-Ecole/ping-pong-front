@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export async function loadPostes() {
     try {
         const response = await fetch('http://127.0.0.1:3333/postes')
@@ -17,6 +19,26 @@ export async function loadPostes() {
     }
 }
 
+export const loadPosteById = async (id_poste) => {
+    try {
+        console.log(id_poste)
+        const response = await fetch('http://127.0.0.1:3333/postes/' + id_poste);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement de l\'opération');
+        }
+        const data = await response.json();
+        return {
+            id: data.id_poste,
+            title: data.libelle_poste,
+            createdAt : data.createdAt,
+            updatedAt : data.updatedAt
+        };
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
 
 export async function AddPoste(posteData) {
     const { libelle_poste } = posteData;
@@ -32,12 +54,13 @@ export async function AddPoste(posteData) {
 
         if (!response.ok) {
             const errorData = await response.json();
+            console.error('Server Error:', errorData); // Journal de débogage
             throw new Error(errorData.errors[0].msg);
         }
 
-        console.log("Nouvelle gamme ajoutée");
+        toast.success("Le poste de travail à bien été crée.");
     } catch (error) {
-        console.error("Erreur lors de l'ajout de la gamme :", error.message);
+        toast.error("Erreur lors de la création du poste de travail.");
         throw error;
     }
 }
@@ -91,9 +114,13 @@ export async function DeletePoste(id_poste){
             throw new Error(errorData.message);
         }
 
-        console.log(`Poste avec l'ID ${id_poste} supprimée avec succès`);
+        toast.success("Le poste de travail à bien été supprimé.");
     } catch (error) {
-        console.error("Erreur lors de la suppression de la gamme :", error.message);
+        if (error.message === 'Impossible de supprimer ce poste de travail car il est référencé par une réalisation.') {
+            toast.error("Impossible de supprimer ce poste de travail car il est référencé par une réalisation.");
+        } else {
+            toast.error("Erreur lors de la suppression du poste de travail.");
+        }
         throw error;
     }
 }

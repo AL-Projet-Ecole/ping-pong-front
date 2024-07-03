@@ -19,7 +19,23 @@ export async function LoginApi(username, password) {
         })
         .then(data => {
             if (data.token) {
-                window.location.href = '/Atelier';
+                const decodedToken = jwtDecode(data.token);
+                console.log(decodedToken.role_user + "coucuuuuu");
+                sessionStorage.setItem('id_user', decodedToken.id_user);
+                switch (decodedToken.role_user) {
+                    case 0:
+                        window.location.href = '/HubAtelier';
+                        break;
+                    case 1:
+                        window.location.href = '/HubAtelier';
+                        break;
+                    case 2:
+                        window.location.href = '/HubCommerciale';
+                        break;
+                    default:
+                        window.location.href = '/';
+                        break;
+                }
             }
             return data;
         })
@@ -28,6 +44,8 @@ export async function LoginApi(username, password) {
             throw error;
         });
 }
+
+
 
 
 // Fonction pour vérifier si le token est valide
@@ -56,9 +74,11 @@ export function getToken() {
 // Fonction pour déconnecter l'utilisateur
 export function logout() {
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('id_user');
     window.location.href = '/login';
 }
 
 export function removeToken() {
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('id_user');
 }

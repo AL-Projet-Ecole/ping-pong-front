@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { loadGammes, AddGamme, DeleteGamme } from "../models/GammeModel";
+import {loadGammes, AddGamme, DeleteGamme, loadGammeById} from "../models/GammeModel";
 import { loadRealisations, AddRealisation, DeleteRealisation } from "../models/RealisationModel";
-import { loadPostes, AddPoste, DeletePoste, UpdatePoste } from "../models/PosteModel";
+import { loadPostes, AddPoste, DeletePoste, UpdatePoste, loadListePostes, loadPosteById } from "../models/PosteModel";
 import {
     loadMachines,
     AddMachine,
@@ -33,6 +33,9 @@ import { Container, Content } from "../components/CommonStyledComponents";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import tw from "twin.macro";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {loadUserById} from "../models/UserModel";
 
 const TwoColumn = tw.div`flex flex-col lg:flex-row`;
 const Column = tw.div``;
@@ -165,7 +168,36 @@ const DataLoader = () => {
                 setActionModal("delGamme");
                 openModal(item);
                 break;
+            case "addOperation":
+                setActionModal("addOperation");
+                try {
+                    const machines = await loadMachines(); // Fonction pour charger toutes les machines
 
+                    const options = machines.map(machine => ({
+                        value: machine.id,
+                        label: machine.title
+                    }));
+
+                    setModalSetterInput({
+                        machine: { type: "select", options, placeholder: "Selection d'une machine" },
+                        libelle_operation: { type: "text", placeholder: "Intituler" },
+                        temps_estimation: { type: "number", placeholder: "Estimation du temps nécessaire en minutes" }
+                    });
+                    openModal();
+                } catch (error) {
+                    console.error("Erreur lors du chargement des machines", error);
+                }
+                break;
+
+            case "delOperation":
+                setActionModal("delOperation");
+                openModal(item);
+                break;
+            case "updtOperation":
+                await UpdateOperation(item);
+                loadOperations().then(setFirstData);
+                setUpdatedData(item);
+                break;
             case "addUnassignedOperation":
                 setActionModal("addUnassignedOperation");
                 try {
@@ -218,6 +250,22 @@ const DataLoader = () => {
                 setUpdatedData(item);
                 toast.success("La mise à jour du poste de travail a bien été effectuée.");
                 break;
+            case "addMachine":
+                setActionModal("addMachine");
+                setModalSetterInput({
+                    libelle_machine: { type: "text", placeholder: "Nom de la machine" },
+                });
+                openModal();
+                break;
+            case "delMachine":
+                setActionModal("delMachine");
+                openModal(item);
+                break;
+            case "updtMachine":
+                await UpdateMachine(item);
+                loadMachines().then(setFirstData);
+                setUpdatedData(item);
+                break;
             case "addUnassignedMachine":
                 setActionModal("addUnassignedMachine");
                 try {
@@ -251,63 +299,90 @@ const DataLoader = () => {
                 setActionModal("delAssignedMachine");
                 openModal(item);
                 break;
-            case "updtMachine":
-                await UpdateMachine(item);
-                loadMachines().then(setFirstData);
-                setUpdatedData(item);
-                toast.success("La mise à jour de la machine a bien été effectuée.");
-                break;
-            case "addOperation":
-                setActionModal("addOperation");
-                try {
-                    const machines = await loadMachines(); // Fonction pour charger toutes les machines
 
-                    const options = machines.map(machine => ({
-                        value: machine.id,
-                        label: machine.title
+            case "addRealisation":
+                setActionModal("addRealisation");
+                try {
+                    const gammes = await loadGammes();
+
+                    const options = gammes.map(gamme => ({
+                        value: gamme.id,
+                        label: gamme.title
                     }));
 
                     setModalSetterInput({
-                        machine: { type: "select", options, placeholder: "Selection d'une machine" },
-                        libelle_operation: { type: "text", placeholder: "Intituler" },
-                        temps_estimation: { type: "number", placeholder: "Estimation du temps nécessaire en minutes" }
+                        gamme: { type: "select", options, placeholder: "Selectionnez une Gamme", onChange: handleGammeChange },
+                        operation: { type: "select", options: [], placeholder: "Selectionnez une Opération", onChange: handleOperationChange },
+                        idM: { type: "text", placeholder: "Machine associée", readOnly: true },
+                        idP: { type: "select", options: [], placeholder: "Selectionnez un Poste de travail"},
+                        dateFab: { type: "date", placeholder: "Date de fabrication", onChange: handleDateChange },
+                        description: { type: "text", placeholder: "Renseignez le temps de réalisation (en minutes)" },
                     });
-                    openModal();
                 } catch (error) {
-                    console.error("Erreur lors du chargement des machines", error);
+                    console.error("Erreur lors du chargement des gammes", error);
                 }
+                openModal();
                 break;
 
-            case "delOperation":
-                setActionModal("delOperation");
+            case "delRealisation":
+                setActionModal("delRealisation");
                 openModal(item);
-                break;
-            case "updtOperation":
-                await UpdateOperation(item);
-                loadOperations().then(setFirstData);
-                setUpdatedData(item);
-                toast.success("La mise à jour de l'opération a bien été effectuée.");
-                break;
-            case "addMachine":
-                setActionModal("addMachine");
-                setModalSetterInput({
-                    libelle_machine: { type: "text", placeholder: "Nom de la machine" },
-                });
-                openModal();
-                break;
-            case "delMachine":
-                setActionModal("delMachine");
-                openModal(item);
-                break;
-            case "addRealisation":
-                setActionModal("addRealisation");
-                // Bonne chance mon meilleur pote (moi même)
-                setModalSetterInput({
-                    libelle_poste: { type: "text", placeholder: "Libelle" }
-                });
-                openModal();
                 break;
         }
+    };
+
+    const handleGammeChange = async (selectedOption) => {
+        setInputValues({
+            gamme: selectedOption.value,
+            operation: "",
+            idM: "",
+            idP: "",
+            dateFab: "",
+            description: ""
+        });
+
+        // Charger les opérations associées à la gamme sélectionnée
+        const operationsIds = await loadListeOperations(selectedOption.value);
+        const operations = await Promise.all(
+            operationsIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation))
+        );
+
+        const options = operations.map(operation => ({
+            value: `${operation.idOp}_${operation.idM}`,
+            label: operation.title
+        }));
+
+        setModalSetterInput(prev => ({
+            ...prev,
+            operation: { ...prev.operation, options }
+        }));
+    };
+
+    const handleOperationChange = async (selectedOption) => {
+        const [idOp, idM] = selectedOption.value.split('_');
+        setInputValues(prev => ({ ...prev, operation: idOp, idM }));
+
+        const machine = await loadMachineById(idM);
+        setInputValues(prev => ({ ...prev, idM: machine.title, idMachine: idM }));
+
+        const postesIds = await loadListePostes(idM);
+        const postes = await Promise.all(
+            postesIds.map(async (poste) => await loadPosteById(poste.id_poste)));
+
+        const options = postes.map(poste => ({
+            value: poste.id,
+            label: poste.title
+        }));
+
+        setModalSetterInput(prev => ({
+            ...prev,
+            idP: { ...prev.idP, options }
+        }));
+    };
+
+    const handleDateChange = (date) => {
+        const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+        setInputValues(prev => ({ ...prev, dateFab: formattedDate }));
     };
 
     const handleActionWithModal = async (idf = null, ids = null) => {
@@ -325,13 +400,12 @@ const DataLoader = () => {
                 await AddGamme(newItem);
                 loadGammes().then(setFirstData);
                 closeModal();
-                toast.success("La gamme à bien été crée.");
                 break;
             case "delGamme":
+                console.log(idf)
                 await DeleteGamme(idf);
                 loadGammes().then(setFirstData);
                 closeModal();
-                toast.success("La gamme à bien été supprimée.");
                 break;
             case "addUnassignedOperation":
                 newItem = {
@@ -351,7 +425,6 @@ const DataLoader = () => {
                 const operations = await Promise.all(operationsIds.map(async (op) => await loadOperationById(op.id_operation, op.id_liste_operation)));
                 setSecondData(operations);
                 closeModal();
-                toast.success("La relation entre la gamme et l'opération à bien été supprimée.");
                 break;
             case "addPoste":
                 if (!inputValues.libelle_poste) {
@@ -364,13 +437,11 @@ const DataLoader = () => {
                 await AddPoste(newItem);
                 loadPostes().then(setFirstData);
                 closeModal();
-                toast.success("Le poste de travail à bien été crée.");
                 break;
             case "delPoste":
                 await DeletePoste(idf);
                 loadPostes().then(setFirstData);
                 closeModal();
-                toast.success("Le poste de travail à bien été supprimé.");
                 break;
             case "addUnassignedMachine":
                 newItem = {
@@ -383,7 +454,6 @@ const DataLoader = () => {
                 const machinesadd = await Promise.all(machinesIdsadd.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
                 setSecondData(machinesadd);
                 closeModal();
-                toast.success("La relation entre le poste de travail et la machine à bien été crée.");
                 break;
             case "delAssignedMachine":
                 await DeleteAssignedMachine(ids);
@@ -391,7 +461,6 @@ const DataLoader = () => {
                 const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
                 setSecondData(machines);
                 closeModal();
-                toast.success("La relation entre le poste de travail et la machine à bien été supprimée.");
                 break;
             case "addOperation":
                 if (!inputValues.libelle_operation && !inputValues.temps_estimation) {
@@ -406,13 +475,11 @@ const DataLoader = () => {
                 await AddOperation(newItem);
                 loadOperations().then(setFirstData);
                 closeModal();
-                toast.success("L'opération à bien été crée.");
                 break;
             case "delOperation":
                 await DeleteOperation(idf);
                 loadOperations().then(setFirstData);
                 closeModal();
-                toast.success("L'opération à bien été supprimée.");
                 break;
             case "addMachine":
                 if (!inputValues.libelle_machine) {
@@ -425,34 +492,35 @@ const DataLoader = () => {
                 await AddMachine(newItem);
                 loadMachines().then(setFirstData);
                 closeModal();
-                toast.success("La machine à bien été crée.");
                 break;
             case "delMachine":
                 await DeleteMachine(idf);
                 loadMachines().then(setFirstData);
                 closeModal();
-                toast.success("La machine à bien été supprimée.");
                 break;
             case "addRealisation":
-                //Bonne chance le frère (moi même)
-                if (!inputValues.libelle_machine) {
-                    setError("Le nom de la machine doit être renseigné.");
+                if (!inputValues.gamme && !inputValues.operation && !inputValues.idP && !inputValues.dateFab && !inputValues.description) {
+                    toast.error("Veuillez renseigner tout les champs.");
                     return;
                 }
                 newItem = {
-                    libelle_machine: inputValues.libelle_machine,
+                    idG: inputValues.gamme,
+                    idU: sessionStorage.getItem('id_user'),
+                    idOp: inputValues.operation,
+                    idM: inputValues.idMachine,
+                    idP: inputValues.idP,
+                    temps_realisation: inputValues.dateFab,
+                    date_debut_fab: inputValues.description,
                 };
-                await AddMachine(newItem);
-                loadMachines().then(setFirstData);
+                await AddRealisation(newItem);
+                loadRealisations().then(setFirstData);
                 closeModal();
-                toast.success("La machine à bien été crée.");
                 break;
         }
     };
 
     return (
         <Container>
-            <ToastContainer />
             <Content>
                 <TwoColumn>
                     <Column>
@@ -467,7 +535,7 @@ const DataLoader = () => {
                         />
                     </Column>
                     <Column>
-                        {secondTitle && (
+                        {secondTitle && activeFirst && (
                             <SecondListComponent
                                 action={action}
                                 secondTitle={secondTitle}
@@ -489,7 +557,12 @@ const DataLoader = () => {
                                 activeItemQuantite={activeFirst?.quantite}
                                 activeItemPrix={activeFirst?.prix}
                                 activeItemProvenance={activeFirst?.provenance}
-                                activeItemIDM={activeFirst?.idM}
+                                activeItemIDG={activeFirst?.idG && loadGammeById(activeFirst.idG)}
+                                activeItemIDU={activeFirst?.idU && loadUserById(activeFirst.idU)}
+                                activeItemIDO={activeFirst?.idO && loadOperationById(activeFirst.idO)}
+                                activeItemIDM={activeFirst?.idM && loadMachineById(activeFirst.idM)}
+                                activeItemIDP={activeFirst?.idP && loadPosteById(activeFirst.idP)}
+                                activeItemDateFab={activeFirst?.dateFab}
                                 optionForInputOperation={activeFirst?.idM && loadMachines()}
                                 activeItemCreatedAt={activeFirst?.createdAt}
                                 activeItemUpdatedAt={activeFirst?.updatedAt}
@@ -499,10 +572,11 @@ const DataLoader = () => {
                     </Column>
                 </TwoColumn>
             </Content>
+
             <ModalComponent
                 isOpen={showModal}
                 onRequestClose={closeModal}
-                modalTitle={actionModal.includes("del") ? "Confirmation" : "Ajouter"}
+                modalTitle={actionModal.includes("add") ? "Ajouter" : "Supprimer"}
                 handleAdd={() => handleActionWithModal(activeFirst?.id, activeSecond?.id)}
                 modalInputs={modalSetterInput}
                 inputValues={inputValues}
@@ -510,6 +584,8 @@ const DataLoader = () => {
                 error={error}
                 actionModal={actionModal}
             />
+
+            <ToastContainer />
         </Container>
     );
 };

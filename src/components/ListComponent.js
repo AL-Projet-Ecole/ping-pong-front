@@ -87,15 +87,17 @@ const ListComponent = ({
                             <TextContainer>
                                 <Title>{item.title}</Title>
                             </TextContainer>
-                            <DeleteButton
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onItemClick(item);
-                                    onButtonClick(buttonActionDel, item);
-                                }}
-                            >
-                                <XIcon />
-                            </DeleteButton>
+                            {action !== "realisation" && (
+                                <DeleteButton
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onItemClick(item);
+                                        onButtonClick(buttonActionDel, item);
+                                    }}
+                                >
+                                    <XIcon />
+                                </DeleteButton>
+                            )}
                         </Post>
                     ))}
             </FirstContainer>
