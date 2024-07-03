@@ -1,14 +1,27 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client'; // Import from react-dom/client
+import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Modal from 'react-modal'; // Import react-modal
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+// Définir l'élément d'application pour react-modal
+Modal.setAppElement('#root');
+
+const AppWithRouter = () => {
+    const location = useLocation();
+    return <App location={location} />;
+};
+
+const root = createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <Router>
+            <AppWithRouter />
+        </Router>
+    </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
