@@ -31,7 +31,12 @@ export default ({
                     activeItemProvenance,
                     activeItemCreatedAt,
                     activeItemUpdatedAt,
+                    activeItemIDG,
+                    activeItemIDU,
+                    activeItemIDO,
                     activeItemIDM,
+                    activeItemIDP,
+                    activeItemDateFab,
                     optionForInputOperation,
                     updatedData
                 }) => {
@@ -39,6 +44,16 @@ export default ({
     const [libelle, setLibelle] = useState("");
     const [titleDescription, setTitleDescription] = useState("");
     const [description, setDescription] = useState("");
+    const [titleGamme, setTitleGamme] = useState("");
+    const [gamme, setGamme] = useState("");
+    const [titleOperation, setTitleOperation] = useState("");
+    const [operation, setOperation] = useState("");
+    const [titleMachine, setTitleMachine] = useState("");
+    const [machine, setMachine] = useState("");
+    const [titleTFab, setTitleTFab] = useState("");
+    const [tFab, setTFab] = useState("");
+    const [titleDFab, setTitleDFab] = useState("");
+    const [dFab, setDFab] = useState("");
     const [titleCreatedAt, setTitleCreatedAt] = useState("");
     const [textCreatedAt, setTextCreatedAt] = useState("");
     const [titleUpdatedAt, setTitleUpdatedAt] = useState("");
@@ -46,9 +61,6 @@ export default ({
 
     const [editLibelle, setEditLibelle] = useState("");
     const [editDescription, setEditDescription] = useState("");
-    const [editQuantite, setEditQuantite] = useState("");
-    const [editPrix, setEditPrix] = useState("");
-    const [editProvenance, setEditProvenance] = useState("");
     const [options, setOptions] = useState([]);
     const [optionValue, setOptionValue] = useState(null);
     const [labelleForIDM, setLabelleForIDM] = useState(null);
@@ -82,8 +94,32 @@ export default ({
                         setLibelle(activeItemLibelle);
                         break;
                     case "realisation":
-                        setTitleLibelle("Intitulé de la réalisation");
-                        setLibelle(activeItemLibelle);
+                        const user = await activeItemIDU
+                        const gamme = await activeItemIDG
+                        const machine = await activeItemIDM
+                        const poste = await activeItemIDP
+                        const operation = await activeItemIDO
+
+                        setTitleLibelle("Responsable");
+                        setLibelle(user.title);
+
+                        setTitleDescription("Poste de travail");
+                        setDescription(poste.title);
+
+                        setTitleGamme("Gamme");
+                        setGamme(gamme.title);
+
+                        setTitleOperation("Opération");
+                        setOperation(operation.title);
+
+                        setTitleMachine("Machine");
+                        setMachine(machine.title);
+
+                        setTitleTFab("Temps de réalisation");
+                        setTFab( activeItemDateFab + " minutes.");
+
+                        setTitleDFab("Date de réalisation");
+                        setDFab(activeItemDescription);
                         break;
                     case "poste":
                         setTitleLibelle("Nom du poste");
@@ -104,9 +140,6 @@ export default ({
 
                 setEditLibelle("");
                 setEditDescription("");
-                setEditQuantite("");
-                setEditPrix("");
-                setEditProvenance("");
             }
         };
 
@@ -118,16 +151,10 @@ export default ({
         if (updatedData) {
             setLibelle(updatedData.libelle || activeItemLibelle);
             setDescription(updatedData.description || activeItemDescription);
-            setEditQuantite(updatedData.quantite || activeItemQuantite);
-            setEditPrix(updatedData.prix || activeItemPrix);
-            setEditProvenance(updatedData.provenance || activeItemProvenance);
             setTextUpdatedAt(new Intl.DateTimeFormat('fr-FR', { dateStyle: 'full', timeStyle: 'short' }).format(new Date()));
 
             setEditLibelle("");
             setEditDescription("");
-            setEditQuantite("");
-            setEditPrix("");
-            setEditProvenance("");
             setOptionValue(options.find(option => option.value === updatedData.idM) || null);
             setLabelleForIDM(options.find(option => option.value === updatedData.idM)?.label)
         }
@@ -143,10 +170,7 @@ export default ({
             id: activeItemId,
             libelle: editLibelle,
             description: editDescription,
-            idM: optionValue?.value,
-            quantite: editQuantite,
-            prix: editPrix,
-            provenance: editProvenance
+            idM: optionValue?.value
         };
 
         let buttonActionUpdt = "";
@@ -195,12 +219,14 @@ export default ({
                         <CustomerProfile>
                             {libelle}
                         </CustomerProfile>
-                        <Input
-                            type="text"
-                            placeholder={libelle}
-                            value={editLibelle}
-                            onChange={(e) => setEditLibelle(e.target.value)}
-                        />
+                        {action !== "realisation" && (
+                            <Input
+                                type="text"
+                                placeholder={libelle}
+                                value={editLibelle}
+                                onChange={(e) => setEditLibelle(e.target.value)}
+                            />
+                        )}
                     </CustomerNameAndProfileContainer>
                 </CustomerInfoAndControlsContainer>
             )}
@@ -213,69 +239,78 @@ export default ({
                         <CustomerProfile>
                             {description}
                         </CustomerProfile>
-                        <Input
-                            type="text"
-                            placeholder={activeItemDescription}
-                            value={editDescription}
-                            onChange={(e) => setEditDescription(e.target.value)}
-                        />
+                        {action !== "realisation" && (
+                            <Input
+                                type="text"
+                                placeholder={activeItemDescription}
+                                value={editDescription}
+                                onChange={(e) => setEditDescription(e.target.value)}
+                            />
+                        )}
                     </CustomerNameAndProfileContainer>
                 </CustomerInfoAndControlsContainer>
             )}
-            {activeItemQuantite && (
+            {action === "realisation" && (
                 <CustomerInfoAndControlsContainer>
                     <CustomerName>
-                        Quantité
+                        {titleGamme}
                     </CustomerName>
                     <CustomerNameAndProfileContainer>
                         <CustomerProfile>
-                            {activeItemQuantite}
+                            {gamme}
                         </CustomerProfile>
-                        <Input
-                            type="number"
-                            value={editQuantite}
-                            onChange={(e) => setEditQuantite(e.target.value)}
-                        />
                     </CustomerNameAndProfileContainer>
                 </CustomerInfoAndControlsContainer>
             )}
-            {activeItemPrix && (
+            {action === "realisation" && (
                 <CustomerInfoAndControlsContainer>
                     <CustomerName>
-                        Prix
+                        {titleOperation}
                     </CustomerName>
                     <CustomerNameAndProfileContainer>
                         <CustomerProfile>
-                            {activeItemPrix}
+                            {operation}
                         </CustomerProfile>
-                        <Input
-                            type="number"
-                            placeholder={activeItemPrix}
-                            value={editPrix}
-                            onChange={(e) => setEditPrix(e.target.value)}
-                        />
                     </CustomerNameAndProfileContainer>
                 </CustomerInfoAndControlsContainer>
             )}
-            {activeItemProvenance && (
+            {action === "realisation" && (
                 <CustomerInfoAndControlsContainer>
                     <CustomerName>
-                        Provenance
+                        {titleMachine}
                     </CustomerName>
                     <CustomerNameAndProfileContainer>
                         <CustomerProfile>
-                            {activeItemProvenance}
+                            {machine}
                         </CustomerProfile>
-                        <Input
-                            type="text"
-                            placeholder={activeItemProvenance}
-                            value={editProvenance}
-                            onChange={(e) => setEditProvenance(e.target.value)}
-                        />
                     </CustomerNameAndProfileContainer>
                 </CustomerInfoAndControlsContainer>
             )}
-            {activeItemIDM && (
+            {action === "realisation" && (
+                <CustomerInfoAndControlsContainer>
+                    <CustomerName>
+                        {titleTFab}
+                    </CustomerName>
+                    <CustomerNameAndProfileContainer>
+                        <CustomerProfile>
+                            {tFab}
+                        </CustomerProfile>
+                    </CustomerNameAndProfileContainer>
+                </CustomerInfoAndControlsContainer>
+            )}
+            {action === "realisation" && (
+                <CustomerInfoAndControlsContainer>
+                    <CustomerName>
+                        {titleDFab}
+                    </CustomerName>
+                    <CustomerNameAndProfileContainer>
+                        <CustomerProfile>
+                            {dFab}
+                        </CustomerProfile>
+                    </CustomerNameAndProfileContainer>
+                </CustomerInfoAndControlsContainer>
+            )}
+            {activeItemIDM && action !== "realisation" && (
                 <CustomerInfoAndControlsContainer>
                     <CustomerName>
                         Machine rattachée
@@ -303,17 +338,19 @@ export default ({
                     </CustomerProfile>
                 </CustomerNameAndProfileContainer>
             </CustomerInfoAndControlsContainer>
-            <CustomerInfoAndControlsContainer>
-                <CustomerName>
-                    {titleUpdatedAt}
-                </CustomerName>
-                <CustomerNameAndProfileContainer>
-                    <CustomerProfile>
-                        {textUpdatedAt}
-                    </CustomerProfile>
-                </CustomerNameAndProfileContainer>
-            </CustomerInfoAndControlsContainer>
-            {titleCreatedAt && (
+            {action !== "realisation" && (
+                <CustomerInfoAndControlsContainer>
+                    <CustomerName>
+                        {titleUpdatedAt}
+                    </CustomerName>
+                    <CustomerNameAndProfileContainer>
+                        <CustomerProfile>
+                            {textUpdatedAt}
+                        </CustomerProfile>
+                    </CustomerNameAndProfileContainer>
+                </CustomerInfoAndControlsContainer>
+            )}
+            {titleCreatedAt && action !== "realisation" &&(
                 <ButtonUpdateContainer>
                     <UpdateButton onClick={handleUpdate}>
                         <PlusIcon />

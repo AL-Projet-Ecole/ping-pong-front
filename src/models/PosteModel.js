@@ -19,6 +19,26 @@ export async function loadPostes() {
     }
 }
 
+export const loadPosteById = async (id_poste) => {
+    try {
+        console.log(id_poste)
+        const response = await fetch('http://127.0.0.1:3333/postes/' + id_poste);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement de l\'opération');
+        }
+        const data = await response.json();
+        return {
+            id: data.id_poste,
+            title: data.libelle_poste,
+            createdAt : data.createdAt,
+            updatedAt : data.updatedAt
+        };
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
 
 export async function AddPoste(posteData) {
     const { libelle_poste } = posteData;
@@ -34,6 +54,7 @@ export async function AddPoste(posteData) {
 
         if (!response.ok) {
             const errorData = await response.json();
+            console.error('Server Error:', errorData); // Journal de débogage
             throw new Error(errorData.errors[0].msg);
         }
 

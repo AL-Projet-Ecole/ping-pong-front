@@ -51,10 +51,8 @@ export default ({
     LoginApi(email, pass)
         .then(data => {
           tokenManager(data.token);
-          navigate('/'); // Redirect after successful login
         })
         .catch(error => {
-          // Handle error (optional)
           console.error('Login failed', error);
         });
   };

@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export const loadRealisations = async () => {
     try {
         const response = await fetch('http://127.0.0.1:3333/realisations');
@@ -10,6 +12,7 @@ export const loadRealisations = async () => {
             idG: realisation.id_gamme,
             idU: realisation.id_user,
             idO: realisation.id_operation,
+            idM: realisation.id_machine,
             idP: realisation.id_poste,
             title: realisation.matricule_realisation,
             description: realisation.temps_realisation,
@@ -25,24 +28,28 @@ export const loadRealisations = async () => {
 
 
 export async function AddRealisation(realisationData) {
-    const { idU, idO, idP, description, dateFab } = realisationData;
+    const { idG, idU, idOp, idM, idP, temps_realisation, date_debut_fab } = realisationData;
 
     try {
+        console.log(realisationData)
         const response = await fetch('http://127.0.0.1:3333/realisations/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                id_gamme: idG,
                 id_user: idU,
-                id_operation: idO,
+                id_operation: idOp,
+                id_machine: idM,
                 id_poste: idP,
-                temps_realisation: description,
-                date_debut_fab: dateFab
+                temps_realisation: temps_realisation,
+                date_debut_fab: date_debut_fab
             })
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.errors[0].msg);
+            console.error('Server Error:', errorData); // Journal de débogage
+            throw new Error('Server Error');
         }
 
         console.log("Nouvelle réalisation ajoutée");

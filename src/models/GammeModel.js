@@ -21,6 +21,27 @@ export const loadGammes = async () => {
     }
 };
 
+export const loadGammeById = async (id_gamme) => {
+    try {
+        const response = await fetch('http://127.0.0.1:3333/gammes/id/' + id_gamme);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement de la gamme.');
+        }
+        const gamme = await response.json();
+        return {
+            id: gamme.id_gamme,
+            title: gamme.titre_gamme,
+            description: gamme.description_gamme,
+            quantite: gamme.quantite,
+            prix: gamme.prix_gamme,
+            provenance: gamme.provenance_gamme
+        };
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
 export async function AddGamme(gammeData) {
     const { titre_gamme, description_gamme, quantite_gamme, prix_gamme, provenance_gamme } = gammeData;
 
@@ -39,6 +60,7 @@ export async function AddGamme(gammeData) {
 
         if (!response.ok) {
             const errorData = await response.json();
+            console.error('Server Error:', errorData); // Journal de débogage
             throw new Error(errorData.errors[0].msg);
         }
 
@@ -55,8 +77,19 @@ export async function DeleteGamme(id_gamme) {
             method: 'DELETE',
         });
 
+        const responseText = await response.text(); // Lire la réponse brute
+        console.log('Raw Response:', responseText); // Journal de débogage
+
         if (!response.ok) {
-            const errorData = await response.json();
+            let errorData;
+            try {
+                errorData = JSON.parse(responseText);
+            } catch (e) {
+                console.error('Invalid JSON response:', responseText);
+                throw new Error('Invalid JSON response from server');
+            }
+
+            console.error('Server Error:', errorData); // Journal de débogage
             throw new Error(errorData.message);
         }
 
@@ -70,5 +103,6 @@ export async function DeleteGamme(id_gamme) {
         throw error;
     }
 }
+
 
 

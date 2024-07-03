@@ -23,7 +23,6 @@ const ModalComponent = ({
                             error,
                             actionModal
                         }) => {
-
     const renderInputs = () => {
         return Object.keys(modalInputs).map((key, index) => {
             const inputConfig = modalInputs[key];
@@ -58,7 +57,12 @@ const ModalComponent = ({
                     <div key={index} style={{ marginBottom: '15px' }}>
                         <Select
                             value={inputConfig.options.find(option => option.value === value)}
-                            onChange={(selectedOption) => setInputValues(prev => ({ ...prev, [key]: selectedOption ? selectedOption.value : '' }))}
+                            onChange={(selectedOption) => {
+                                setInputValues(prev => ({ ...prev, [key]: selectedOption ? selectedOption.value : '' }));
+                                if (inputConfig.onChange) {
+                                    inputConfig.onChange(selectedOption);
+                                }
+                            }}
                             options={inputConfig.options}
                             placeholder={inputConfig.placeholder}
                             isSearchable={true}
@@ -74,12 +78,12 @@ const ModalComponent = ({
                         placeholder={inputConfig.placeholder}
                         value={value}
                         onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
+                        readOnly={inputConfig.readOnly || false}
                     />
                 </div>
             );
         });
     };
-
 
     return (
         <Modal
@@ -125,3 +129,4 @@ const ModalComponent = ({
 };
 
 export default ModalComponent;
+
