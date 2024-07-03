@@ -197,7 +197,7 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
                         gammes.map((gamme, index) => (
                             <CardContainer key={index}>
                                 <Card className="group" href={gamme.url} initial="rest" whileHover="hover" animate="rest">
-                                    <CardImageContainer imageSrc={typeToImage[gamme.type_gamme]}>{/* Utilisation de l'image en fonction du type */}
+                                    <CardImageContainer imageSrc={typeToImage[gamme.type_gamme]}>
                                         <CardStockContainer>
                                             <CardStock>{gamme.stock}</CardStock>
                                         </CardStockContainer>
