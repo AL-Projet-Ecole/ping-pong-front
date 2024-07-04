@@ -12,7 +12,11 @@ import {
     loadMachineById,
     loadUnassignedListeMachines,
     AddAssignementMachine,
-    DeleteAssignedMachine
+    DeleteAssignedMachine,
+    loadListeOpMachines,
+    loadUnassignedListeOpMachines,
+    DeleteAssignedOpMachine,
+    AddAssignementOpMachine
 } from "../models/MachineModel";
 import {
     loadOperations,
@@ -72,7 +76,7 @@ const DataLoader = () => {
             case "/Operations":
                 setAction("operation");
                 setFirstTitle("Opérations");
-                setSecondTitle(null);
+                setSecondTitle("Machines");
                 loadOperations().then(setFirstData);
                 break;
             case "/Machines":
@@ -114,6 +118,9 @@ const DataLoader = () => {
             case "poste":
                 handlePosteItemClick(item);
                 break;
+            case "operation":
+                handleOperationItemClick(item);
+                break;
             default:
                 handleFirstItemClick(item);
                 break;
@@ -130,7 +137,14 @@ const DataLoader = () => {
     const handlePosteItemClick = async (item) => {
         setActiveFirst(item);
         const machinesIds = await loadListeMachines(item.id);
-        const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
+        const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine)));
+        setSecondData(machines);
+    };
+
+    const handleOperationItemClick = async (item) => {
+        setActiveFirst(item);
+        const machinesIds = await loadListeOpMachines(item.id);
+        const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine)));
         setSecondData(machines);
     };
 
@@ -283,7 +297,7 @@ const DataLoader = () => {
 
                     setModalSetterInput({
                         idPoste: { type: "hidden", value: item },
-                        operation: { type: "select", options, placeholder: "Selection d'une machine." }
+                        option: { type: "select", options, placeholder: "Selection d'une machine." }
                     });
                     if (item === undefined) {
                         toast.error("Veuillez sélectionner un poste de travail d'abord.");
@@ -299,6 +313,40 @@ const DataLoader = () => {
                 setActionModal("delAssignedMachine");
                 openModal(item);
                 break;
+            case "addUnassignedOpMachine":
+                setActionModal("addUnassignedOpMachine");
+                try {
+                    const optionsValues = await loadUnassignedListeOpMachines(item);
+
+                    const unassignedMachines = await Promise.all(
+                        optionsValues.map(async (machine) => await loadMachineById(machine.id_machine, machine.id_operation_machine))
+                    );
+
+                    const filteredMachines = unassignedMachines.filter(machine => machine !== null);
+                    const options = filteredMachines.map(machine => ({
+                        value: machine.idM,
+                        label: machine.title
+                    }));
+
+                    setModalSetterInput({
+                        idOperation: { type: "hidden", value: item },
+                        option: { type: "select", options, placeholder: "Selection d'une machine." }
+                    });
+                    if (item === undefined) {
+                        toast.error("Veuillez sélectionner une opération d'abord.");
+                        return;
+                    }
+                    openModal(item);
+                } catch (error) {
+                    console.error("Erreur lors du chargement des opérations non attribuées", error);
+                }
+                break;
+
+            case "delAssignedOpMachine":
+                setActionModal("delAssignedOpMachine");
+                openModal(item);
+                break;
+
 
             case "addRealisation":
                 setActionModal("addRealisation");
@@ -446,7 +494,7 @@ const DataLoader = () => {
             case "addUnassignedMachine":
                 newItem = {
                     idPoste: activeFirstId,
-                    idMac: inputValues.operation
+                    idMac: inputValues.option
                 };
                 console.log(newItem);
                 await AddAssignementMachine(newItem);
@@ -460,6 +508,25 @@ const DataLoader = () => {
                 const machinesIds = await loadListeMachines(idf);
                 const machines = await Promise.all(machinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_poste_machine)));
                 setSecondData(machines);
+                closeModal();
+                break;
+            case "addUnassignedOpMachine":
+                newItem = {
+                    idOperation: activeFirstId,
+                    idMac: inputValues.option
+                };
+                console.log(newItem);
+                await AddAssignementOpMachine(newItem);
+                const opMachinesIdsadd = await loadListeOpMachines(activeFirstId);
+                const opMachinesadd = await Promise.all(opMachinesIdsadd.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_operation_machine)));
+                setSecondData(opMachinesadd);
+                closeModal();
+                break;
+            case "delAssignedOpMachine":
+                await DeleteAssignedOpMachine(ids);
+                const opMachinesIds = await loadListeOpMachines(idf);
+                const opMachines = await Promise.all(opMachinesIds.map(async (mac) => await loadMachineById(mac.id_machine, mac.id_operation_machine)));
+                setSecondData(opMachines);
                 closeModal();
                 break;
             case "addOperation":

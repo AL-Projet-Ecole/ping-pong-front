@@ -19,7 +19,7 @@ export const loadMachines = async () => {
     }
 };
 
-export const loadMachineById = async (id_machine, id_poste_machine = null) => {
+export const loadMachineById = async (id_machine, id_other_machine = null) => {
     try {
         const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/machines/' + id_machine);
         if (!response.ok) {
@@ -27,7 +27,7 @@ export const loadMachineById = async (id_machine, id_poste_machine = null) => {
         }
         const data = await response.json();
         return {
-            id : id_poste_machine,
+            id : id_other_machine,
             title: data.libelle_machine,
             idM: data.id_machine,
         };
@@ -51,11 +51,39 @@ export const loadUnassignedListeMachines = async (id_poste) => {
     }
 };
 
+export const loadUnassignedListeOpMachines = async (id_operation) => {
+    try {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operationMachines/Unassigned/' + id_operation);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des machines du poste de travail');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+};
+
 export const loadListeMachines = async (id_poste) => {
     try {
         const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postMachines/listMachine/' + id_poste);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des machines du poste');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+};
+
+export const loadListeOpMachines = async (id_operation) => {
+    try {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operationMachines/listMachine/' + id_operation);
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des machines de l\'opération.');
         }
         const data = await response.json();
         return data;
@@ -86,6 +114,31 @@ export async function AddAssignementMachine(listMachineData) {
         toast.success("La relation entre le poste de travail et la machine à bien été crée.");
     } catch (error) {
         toast.error("Erreur lors de la création de la relation entre le poste de travail et la machine.");
+        throw error;
+    }
+}
+
+export async function AddAssignementOpMachine(listOpMachineData) {
+    const { idOperation, idMac } = listOpMachineData;
+
+    try {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operationMachines/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id_operation: idOperation,
+                id_machine: idMac,
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        toast.success("La relation entre l'opération et la machine à bien été crée.");
+    } catch (error) {
+        toast.error("Erreur lors de la création de la relation entre l'opération et la machine.");
         throw error;
     }
 }
@@ -128,6 +181,24 @@ export async function DeleteAssignedMachine(id_poste_machine){
         toast.success("La relation entre le poste de travail et la machine à bien été supprimée.");
     } catch (error) {
         toast.error("Erreur lors de la suppression de la relation entre le poste de travail et la machine.");
+        throw error;
+    }
+}
+
+export async function DeleteAssignedOpMachine(id_operation_machine){
+    try {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operationMachines/${id_operation_machine}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message);
+        }
+
+        toast.success("La relation entre l'opération et la machine à bien été supprimée.");
+    } catch (error) {
+        toast.error("Erreur lors de la suppression de la relation entre l'opération et la machine.");
         throw error;
     }
 }

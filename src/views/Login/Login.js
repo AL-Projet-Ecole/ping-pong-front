@@ -7,7 +7,7 @@ import {css} from "styled-components/macro"; //eslint-disable-line
 import illustration from "../../assets/images/ping-pong-logo1.png";
 import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg";
 import { LoginApi } from "../../models/AuthModel"; // Updated the import path
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -41,7 +41,6 @@ export default ({
                   forgotPasswordUrl = "#",
                   signupUrl = "#",
                 }) => {
-  const navigate = useNavigate(); // Initialize the navigate hook
   const username = useRef(null);
   const password = useRef(null);
 

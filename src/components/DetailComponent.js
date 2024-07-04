@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import tw from "twin.macro";
-import styled, { css } from "styled-components/macro"; //eslint-disable-line
+import styled from "styled-components/macro"; //eslint-disable-line
 
 import "slick-carousel/slick/slick.css";
 import {
@@ -22,7 +22,6 @@ export default ({
                     action,
                     onButtonClick,
                     heading = "Détails",
-                    src = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3.25&w=256&h=256&q=80",
                     activeItemId,
                     activeItemLibelle,
                     activeItemDescription,
@@ -69,9 +68,10 @@ export default ({
         const fetchData = async () => {
             if (activeItemId) {
                 let getOption = [];
-
+                let machine = null;
                 switch (action) {
                     case "operation":
+                        machine = await activeItemIDM;
                         setTitleLibelle("Intitulé de l'opération");
                         setLibelle(activeItemLibelle);
                         setTitleDescription("Temps estimé à la réalisation de l'opération (en minutes)");
@@ -94,11 +94,11 @@ export default ({
                         setLibelle(activeItemLibelle);
                         break;
                     case "realisation":
-                        const user = await activeItemIDU
-                        const gamme = await activeItemIDG
-                        const machine = await activeItemIDM
-                        const poste = await activeItemIDP
-                        const operation = await activeItemIDO
+                        const user = await activeItemIDU;
+                        const gamme = await activeItemIDG;
+                        machine = await activeItemIDM;
+                        const poste = await activeItemIDP;
+                        const operation = await activeItemIDO;
 
                         setTitleLibelle("Responsable");
                         setLibelle(user.title);
@@ -116,7 +116,7 @@ export default ({
                         setMachine(machine.title);
 
                         setTitleTFab("Temps de réalisation");
-                        setTFab( activeItemDateFab + " minutes.");
+                        setTFab(activeItemDateFab + " minutes.");
 
                         setTitleDFab("Date de réalisation");
                         setDFab(activeItemDescription);
@@ -130,8 +130,13 @@ export default ({
                 }
 
                 setOptions(getOption);
-                setOptionValue(getOption.find(option => option.value === activeItemIDM) || null);
-                setLabelleForIDM(getOption.find(option => option.value === activeItemIDM)?.label)
+
+                console.log(machine);
+
+                // Ensure machine.idM is used correctly
+                const foundOption = getOption.find(option => option.value === machine?.idM);
+                setOptionValue(foundOption || null);
+                setLabelleForIDM(foundOption ? foundOption.label : null);
 
                 setTitleCreatedAt("Date de création");
                 setTextCreatedAt(new Intl.DateTimeFormat('fr-FR', { dateStyle: 'full', timeStyle: 'short' }).format(new Date(activeItemCreatedAt)));
@@ -146,7 +151,6 @@ export default ({
         fetchData();
     }, [activeItemId, action]);
 
-
     useEffect(() => {
         if (updatedData) {
             setLibelle(updatedData.libelle || activeItemLibelle);
@@ -156,7 +160,7 @@ export default ({
             setEditLibelle("");
             setEditDescription("");
             setOptionValue(options.find(option => option.value === updatedData.idM) || null);
-            setLabelleForIDM(options.find(option => option.value === updatedData.idM)?.label)
+            setLabelleForIDM(options.find(option => option.value === updatedData.idM)?.label);
         }
     }, [updatedData]);
 
@@ -177,11 +181,11 @@ export default ({
 
         switch (action) {
             case "operation":
-                if (/[^0-9 ]/.test(editDescription)){
+                if (/[^0-9 ]/.test(editDescription)) {
                     toast.error("Les champs qui définissent du temps ne peuvent contenir que des données numériques.");
                     return;
                 }
-                if (optionValue === null){
+                if (optionValue === null) {
                     toast.error("Veuillez selectionner une machine.");
                     return;
                 }
@@ -201,7 +205,7 @@ export default ({
         }
 
         if (buttonActionUpdt !== "") {
-            onButtonClick(buttonActionUpdt, newItem)
+            onButtonClick(buttonActionUpdt, newItem);
         }
     };
 
@@ -251,64 +255,58 @@ export default ({
                 </CustomerInfoAndControlsContainer>
             )}
             {action === "realisation" && (
-                <CustomerInfoAndControlsContainer>
-                    <CustomerName>
-                        {titleGamme}
-                    </CustomerName>
-                    <CustomerNameAndProfileContainer>
-                        <CustomerProfile>
-                            {gamme}
-                        </CustomerProfile>
-                    </CustomerNameAndProfileContainer>
-                </CustomerInfoAndControlsContainer>
-            )}
-            {action === "realisation" && (
-                <CustomerInfoAndControlsContainer>
-                    <CustomerName>
-                        {titleOperation}
-                    </CustomerName>
-                    <CustomerNameAndProfileContainer>
-                        <CustomerProfile>
-                            {operation}
-                        </CustomerProfile>
-                    </CustomerNameAndProfileContainer>
-                </CustomerInfoAndControlsContainer>
-            )}
-            {action === "realisation" && (
-                <CustomerInfoAndControlsContainer>
-                    <CustomerName>
-                        {titleMachine}
-                    </CustomerName>
-                    <CustomerNameAndProfileContainer>
-                        <CustomerProfile>
-                            {machine}
-                        </CustomerProfile>
-                    </CustomerNameAndProfileContainer>
-                </CustomerInfoAndControlsContainer>
-            )}
-            {action === "realisation" && (
-                <CustomerInfoAndControlsContainer>
-                    <CustomerName>
-                        {titleTFab}
-                    </CustomerName>
-                    <CustomerNameAndProfileContainer>
-                        <CustomerProfile>
-                            {tFab}
-                        </CustomerProfile>
-                    </CustomerNameAndProfileContainer>
-                </CustomerInfoAndControlsContainer>
-            )}
-            {action === "realisation" && (
-                <CustomerInfoAndControlsContainer>
-                    <CustomerName>
-                        {titleDFab}
-                    </CustomerName>
-                    <CustomerNameAndProfileContainer>
-                        <CustomerProfile>
-                            {dFab}
-                        </CustomerProfile>
-                    </CustomerNameAndProfileContainer>
-                </CustomerInfoAndControlsContainer>
+                <>
+                    <CustomerInfoAndControlsContainer>
+                        <CustomerName>
+                            {titleGamme}
+                        </CustomerName>
+                        <CustomerNameAndProfileContainer>
+                            <CustomerProfile>
+                                {gamme}
+                            </CustomerProfile>
+                        </CustomerNameAndProfileContainer>
+                    </CustomerInfoAndControlsContainer>
+                    <CustomerInfoAndControlsContainer>
+                        <CustomerName>
+                            {titleOperation}
+                        </CustomerName>
+                        <CustomerNameAndProfileContainer>
+                            <CustomerProfile>
+                                {operation}
+                            </CustomerProfile>
+                        </CustomerNameAndProfileContainer>
+                    </CustomerInfoAndControlsContainer>
+                    <CustomerInfoAndControlsContainer>
+                        <CustomerName>
+                            {titleMachine}
+                        </CustomerName>
+                        <CustomerNameAndProfileContainer>
+                            <CustomerProfile>
+                                {machine}
+                            </CustomerProfile>
+                        </CustomerNameAndProfileContainer>
+                    </CustomerInfoAndControlsContainer>
+                    <CustomerInfoAndControlsContainer>
+                        <CustomerName>
+                            {titleTFab}
+                        </CustomerName>
+                        <CustomerNameAndProfileContainer>
+                            <CustomerProfile>
+                                {tFab}
+                            </CustomerProfile>
+                        </CustomerNameAndProfileContainer>
+                    </CustomerInfoAndControlsContainer>
+                    <CustomerInfoAndControlsContainer>
+                        <CustomerName>
+                            {titleDFab}
+                        </CustomerName>
+                        <CustomerNameAndProfileContainer>
+                            <CustomerProfile>
+                                {dFab}
+                            </CustomerProfile>
+                        </CustomerNameAndProfileContainer>
+                    </CustomerInfoAndControlsContainer>
+                </>
             )}
             {activeItemIDM && action !== "realisation" && (
                 <CustomerInfoAndControlsContainer>
@@ -323,7 +321,10 @@ export default ({
                             value={options.find(option => option.value === optionValue?.value)}
                             options={options}
                             isSearchable={true}
-                            onChange={(selectedOption) => setOptionValue(selectedOption)}
+                            onChange={(selectedOption) => {
+                                setOptionValue(selectedOption);
+                                setLabelleForIDM(selectedOption.label);
+                            }}
                         />
                     </CustomerNameAndProfileContainer>
                 </CustomerInfoAndControlsContainer>
@@ -350,7 +351,7 @@ export default ({
                     </CustomerNameAndProfileContainer>
                 </CustomerInfoAndControlsContainer>
             )}
-            {titleCreatedAt && action !== "realisation" &&(
+            {titleCreatedAt && action !== "realisation" && (
                 <ButtonUpdateContainer>
                     <UpdateButton onClick={handleUpdate}>
                         <PlusIcon />
