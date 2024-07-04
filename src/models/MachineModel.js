@@ -2,7 +2,7 @@ import {toast} from "react-toastify";
 
 export const loadMachines = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/machines');
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/machines');
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des machines');
         }
@@ -21,7 +21,7 @@ export const loadMachines = async () => {
 
 export const loadMachineById = async (id_machine, id_poste_machine = null) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/machines/' + id_machine);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/machines/' + id_machine);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement de la machine');
         }
@@ -39,7 +39,7 @@ export const loadMachineById = async (id_machine, id_poste_machine = null) => {
 
 export const loadUnassignedListeMachines = async (id_poste) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/postMachines/Unassigned/' + id_poste);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postMachines/Unassigned/' + id_poste);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des machines du poste de travail');
         }
@@ -53,7 +53,7 @@ export const loadUnassignedListeMachines = async (id_poste) => {
 
 export const loadListeMachines = async (id_poste) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/postMachines/listMachine/' + id_poste);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postMachines/listMachine/' + id_poste);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des machines du poste');
         }
@@ -69,7 +69,7 @@ export async function AddAssignementMachine(listMachineData) {
     const { idPoste, idMac } = listMachineData;
 
     try {
-        const response = await fetch('http://127.0.0.1:3333/postMachines/', {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postMachines/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -93,7 +93,7 @@ export async function AddAssignementMachine(listMachineData) {
 export async function UpdateMachine(machineData) {
     const { id, libelle } = machineData;
     try {
-        const response = await fetch(`http://127.0.0.1:3333/machines/${id}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/machines/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -116,7 +116,7 @@ export async function UpdateMachine(machineData) {
 
 export async function DeleteAssignedMachine(id_poste_machine){
     try {
-        const response = await fetch(`http://127.0.0.1:3333/postMachines/${id_poste_machine}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postMachines/${id_poste_machine}`, {
             method: 'DELETE',
         });
 
@@ -136,7 +136,7 @@ export async function AddMachine(machineData) {
     const { libelle_machine } = machineData;
 
     try {
-        const response = await fetch('http://127.0.0.1:3333/machines/', {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/machines/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -158,7 +158,7 @@ export async function AddMachine(machineData) {
 
 export async function DeleteMachine(id_machine){
     try {
-        const response = await fetch(`http://127.0.0.1:3333/machines/${id_machine}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/machines/${id_machine}`, {
             method: 'DELETE',
         });
 

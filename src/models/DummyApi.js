@@ -1,7 +1,7 @@
 //**********************      LOGIN PART        ***************************/
 
 export async function LoginApi(username, password) {
-  return fetch('http://127.0.0.1:3333/auth/login', {
+  return fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/auth/login', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({

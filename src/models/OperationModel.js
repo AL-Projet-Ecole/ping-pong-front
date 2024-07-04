@@ -2,7 +2,7 @@ import {toast} from "react-toastify";
 
 export const loadOperations = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/operations');
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operations');
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des opérations');
         }
@@ -24,7 +24,7 @@ export const loadOperations = async () => {
 
 export const loadOperationById = async (id_operation, id_liste_operation = null) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/operations/' + id_operation);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operations/' + id_operation);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement de l\'opération');
         }
@@ -47,7 +47,7 @@ export const loadOperationById = async (id_operation, id_liste_operation = null)
 
 export const loadListeOperations = async (id_gamme) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/listeOperations/' + id_gamme);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/listeOperations/' + id_gamme);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des opérations de la gamme');
         }
@@ -61,7 +61,7 @@ export const loadListeOperations = async (id_gamme) => {
 
 export const loadUnassignedListeOperations = async (id_gamme) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/listeOperations/Unassigned/' + id_gamme);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/listeOperations/Unassigned/' + id_gamme);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des opérations de la gamme');
         }
@@ -78,7 +78,7 @@ export async function AddAssignementOperation(listOperationData) {
 
     try {
         console.log(idGamme, idOp)
-        const response = await fetch('http://127.0.0.1:3333/listeOperations/', {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/listeOperations/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -102,7 +102,7 @@ export async function AddAssignementOperation(listOperationData) {
 
 export async function DeleteAssignedOperation(id_liste_operation){
     try {
-        const response = await fetch(`http://127.0.0.1:3333/listeOperations/${id_liste_operation}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/listeOperations/${id_liste_operation}`, {
             method: 'DELETE',
         });
 
@@ -122,7 +122,7 @@ export async function AddOperation(operationData) {
     const { id_machine, libelle_operation, temps_estimation } = operationData;
 
     try {
-        const response = await fetch('http://127.0.0.1:3333/operations/', {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operations/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -147,7 +147,7 @@ export async function AddOperation(operationData) {
 export async function UpdateOperation(operationData) {
     const { id, libelle, description, idM } = operationData;
     try {
-        const response = await fetch(`http://127.0.0.1:3333/operations/${id}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operations/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -172,7 +172,7 @@ export async function UpdateOperation(operationData) {
 
 export async function DeleteOperation(id_operation){
     try {
-        const response = await fetch(`http://127.0.0.1:3333/operations/${id_operation}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/operations/${id_operation}`, {
             method: 'DELETE',
         });
 

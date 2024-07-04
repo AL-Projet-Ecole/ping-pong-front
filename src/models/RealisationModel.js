@@ -2,7 +2,7 @@ import {toast} from "react-toastify";
 
 export const loadRealisations = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/realisations');
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/realisations');
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des réalisations');
         }
@@ -32,7 +32,7 @@ export async function AddRealisation(realisationData) {
 
     try {
         console.log(realisationData)
-        const response = await fetch('http://127.0.0.1:3333/realisations/', {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/realisations/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -2,7 +2,7 @@ import {toast} from "react-toastify";
 
 export async function loadPostes() {
     try {
-        const response = await fetch('http://127.0.0.1:3333/postes')
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postes')
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des postes');
         }
@@ -22,7 +22,7 @@ export async function loadPostes() {
 export const loadPosteById = async (id_poste) => {
     try {
         console.log(id_poste)
-        const response = await fetch('http://127.0.0.1:3333/postes/' + id_poste);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postes/' + id_poste);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement de l\'opération');
         }
@@ -44,7 +44,7 @@ export async function AddPoste(posteData) {
     const { libelle_poste } = posteData;
 
     try {
-        const response = await fetch('http://127.0.0.1:3333/postes', {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -68,7 +68,7 @@ export async function AddPoste(posteData) {
 export async function UpdatePoste(posteData) {
     const { id, libelle } = posteData;
     try {
-        const response = await fetch(`http://127.0.0.1:3333/postes/${id}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postes/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -91,7 +91,7 @@ export async function UpdatePoste(posteData) {
 
 export const loadListePostes = async (id_post) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/postMachines/listPost/' + id_post);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postMachines/listPost/' + id_post);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des machines du poste');
         }
@@ -105,7 +105,7 @@ export const loadListePostes = async (id_post) => {
 
 export async function DeletePoste(id_poste){
     try {
-        const response = await fetch(`http://127.0.0.1:3333/postes/${id_poste}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/postes/${id_poste}`, {
             method: 'DELETE',
         });
 

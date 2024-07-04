@@ -1,7 +1,7 @@
 import { toast } from 'react-toastify';
 export const loadGammes = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/gammes');
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/gammes');
         if (!response.ok) {
             toast.error("Erreur lors du chargement des gammes.");
             throw new Error('Erreur lors du chargement des gammes');
@@ -24,7 +24,7 @@ export const loadGammes = async () => {
 
 export const loadGammesByType = async (type_gamme) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/gammes/type/'+ type_gamme);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/gammes/type/'+ type_gamme);
         if (!response.ok) {
             toast.error("Erreur lors du chargement des gammes.");
             throw new Error('Erreur lors du chargement des gammes');
@@ -47,7 +47,7 @@ export const loadGammesByType = async (type_gamme) => {
 
 export const loadGammeById = async (id_gamme) => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/gammes/id/' + id_gamme);
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/gammes/id/' + id_gamme);
         if (!response.ok) {
             throw new Error('Erreur lors du chargement de la gamme.');
         }
@@ -71,7 +71,7 @@ export async function AddGamme(gammeData) {
     const { titre_gamme, description_gamme, prix_gamme, provenance_gamme, type_gamme, stock_gamme } = gammeData;
 
     try {
-        const response = await fetch('http://127.0.0.1:3333/gammes', {
+        const response = await fetch('https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/gammes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -99,7 +99,7 @@ export async function AddGamme(gammeData) {
 
 export async function DeleteGamme(id_gamme) {
     try {
-        const response = await fetch(`http://127.0.0.1:3333/gammes/${id_gamme}`, {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/gammes/${id_gamme}`, {
             method: 'DELETE',
         });
 
