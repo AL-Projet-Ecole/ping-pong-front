@@ -97,6 +97,34 @@ export async function AddGamme(gammeData) {
     }
 }
 
+export async function UpdateGamme(gammeData) {
+    const { id, titre, description, prix, provenance, type, stock } = gammeData;
+    try {
+        const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/gammes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: titre,
+                description: description,
+                prix: prix,
+                provenance: provenance,
+                type: type,
+                stock: stock
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors[0].msg);
+        }
+
+        toast.success("La mise à jour de la machine a bien été effectuée.");
+    } catch (error) {
+        toast.error("Erreur lors de la mise à jour de la machine.");
+        throw error;
+    }
+}
+
 export async function DeleteGamme(id_gamme) {
     try {
         const response = await fetch(`https://www.main-bvxea6i-gxdg35vk6cfgm.fr-4.platformsh.site/gammes/${id_gamme}`, {

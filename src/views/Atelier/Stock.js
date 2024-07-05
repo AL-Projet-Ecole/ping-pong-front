@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import tw from "twin.macro";
-import styled from "styled-components";
-import { css } from "styled-components/macro";
+import styled, { css } from "styled-components";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
-import { AddGamme, loadGammesByType, loadGammes } from "../../models/GammeModel";
+import {AddGamme, loadGammesByType, loadGammes, UpdateGamme} from "../../models/GammeModel";
 import ModalComponent from "components/ModalComponent";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AddButton, Heading, SearchInputContainer } from "../../components/CommonStyledComponents";
 import { ReactComponent as PlusIcon } from "feather-icons/dist/icons/plus.svg";
 
-import pingpongStock from "../../assets/images/ping-pong-stock.png"; // Image par défaut
-//import livrableImage from "../../assets/images/livrable-image.png";
-import livrableImage from "../../assets/images/ping-pong-stock.png";
-//import intermediaireImage from "../../assets/images/intermediaire-image.png";
-import intermediaireImage from "../../assets/images/ping-pong-stock.png";
-//import matieresPremieresImage from "../../assets/images/matieres-premieres-image.png";
-import matieresPremieresImage from "../../assets/images/ping-pong-stock.png";
+// Import des images
+import pingpongStock from "../../assets/images/ping-pong-stock.png";
+import livrableImage from "../../assets/images/livrable-image.jpg";
+import AcheterImage from "../../assets/images/acheter-image.jpg";
+import intermediaireImage from "../../assets/images/intermediaire-image.jpg";
+import matieresPremieresImage from "../../assets/images/matieres-premieres-image.jpg";
+import {loadMachines, UpdateMachine} from "../../models/MachineModel";
+import {loadListeOperations, loadOperationById} from "../../models/OperationModel";
 
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
 const TabsControl = tw.div`flex flex-wrap bg-gray-200 px-2 py-2 rounded leading-none mt-12 xl:mt-0`;
@@ -29,16 +29,17 @@ const TabControl = styled.div`
     ${tw`bg-gray-300 text-gray-700`}
   }
   ${props => props.active && tw`bg-primary-500! text-gray-100!`}
-}
 `;
 
 const TabContent = tw(motion.div)`mt-6 flex flex-wrap sm:-mr-10 md:-mr-6 lg:-mr-12`;
 const CardContainer = tw.div`mt-10 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 sm:pr-10 md:pr-6 lg:pr-12`;
 const Card = tw(motion.a)`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0`;
+
 const CardImageContainer = styled.div`
   ${props => css`background-image: url("${props.imageSrc}");`}
   ${tw`h-56 xl:h-64 bg-center bg-cover relative rounded-t`}
 `;
+
 const CardStockContainer = tw.div`leading-none absolute inline-flex bg-gray-100 bottom-0 left-0 ml-4 mb-4 rounded-full px-5 py-2 items-end`;
 const CardStock = styled.div`
   ${tw`mr-1 text-sm font-bold flex items-end`}
@@ -56,7 +57,8 @@ const CardButton = tw(PrimaryButtonBase)`text-sm`;
 const CardText = tw.div`p-4 text-gray-900`;
 const CardTitle = tw.h5`text-lg font-semibold group-hover:text-primary-500`;
 
-const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediaire", "Matières Premières"] }) => {
+
+const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Acheter", "Intermediaire", "Matières Premières"] }) => {
     const [activeTab, setActiveTab] = useState(tabs[0]);
     const [gammes, setGammes] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -64,31 +66,41 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
     const [actionModal, setActionModal] = useState("");
     const [modalSetterInput, setModalSetterInput] = useState({});
     const [inputValues, setInputValues] = useState({});
+    const [activeGamme, setActiveGamme] = useState({});
+    const [options, setOptions] = useState({});
 
     // Tableau associant chaque type de gamme à son image correspondante
     const typeToImage = {
-        Toutes: pingpongStock, // Image par défaut
+        Toutes: pingpongStock,
         Livrable: livrableImage,
+        Acheter: AcheterImage,
         Intermediaire: intermediaireImage,
         "Matières Premières": matieresPremieresImage
     };
 
     useEffect(() => {
-        const loadPieces = async () => {
-            if (activeTab === "Toutes") {
-                const allGammes = await loadGammes(); // Appel à une fonction loadAllGammes qui charge toutes les gammes
-                setGammes(allGammes);
-            } else {
-                const data = await loadGammesByType(activeTab);
-                setGammes(data);
-            }
-        };
+
+
+        setOptions([
+            { value: "Livrable", label: "Livrable" },
+            { value: "Acheter", label: "Acheter" },
+            { value: "Intermediaire", label: "Intermediaire" },
+            { value: "Matières Premières", label: "Matières Premières" }
+        ])
 
         loadPieces();
     }, [activeTab]);
 
+    const loadPieces = async () => {
+        if (activeTab === "Toutes") {
+            const allGammes = await loadGammes();
+            setGammes(allGammes);
+        } else {
+            const data = await loadGammesByType(activeTab);
+            setGammes(data);
+        }
+    };
     const openModal = () => {
-        setActionModal("addGamme");
         setShowModal(true);
     };
 
@@ -96,16 +108,15 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
         setShowModal(false);
     };
 
+    const setAllActiveData = (item) => {
+        setActiveGamme(item);
+    }
+
     const getOnClickAction = action => {
         switch (action) {
             case "addGamme":
-                const options = [
-                    { value: "Livrable", label: "Livrable" },
-                    { value: "Intermediaire", label: "Intermediaire" },
-                    { value: "Matières Premières", label: "Matières Premières" }
-                ];
-
                 setActionModal("addGamme");
+
                 setModalSetterInput({
                     titre_gamme: { type: "text", placeholder: "Nom de la pièce" },
                     description_gamme: { type: "textarea", placeholder: "Description" },
@@ -117,20 +128,31 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
 
                 openModal();
                 break;
+            case "showDetail":
+                setActionModal("showDetail");
+                setModalSetterInput({
+                    titre_gamme: { type: "text", placeholder: activeGamme.title, value: inputValues.titre_gamme},
+                    description_gamme: { type: "textarea", placeholder: activeGamme.description, value: inputValues.description_gamme},
+                    prix_gamme: { type: "number", placeholder: "Prix € : " + activeGamme.prix, value: inputValues.prix_gamme},
+                    provenance_gamme: { type: "text", placeholder: "Provenance : " + activeGamme.provenance, value: inputValues.provenance_gamme},
+                    type_gamme: { type: "select", options, placeholder: activeGamme.type, value: inputValues.type_gamme},
+                    stock_gamme: { type: "number", placeholder: "Quantité : " + activeGamme.stock, value: inputValues.stock_gamme}
+                });
+                openModal();
+                break;
             default:
-                setActiveTab(action); // Assurez-vous que l'action sélectionne correctement l'onglet actif
+                setActiveTab(action);
                 break;
         }
     };
 
     const handleActionWithModal = async () => {
-        let newItem = {};
         if (actionModal === "addGamme") {
             if (!inputValues.titre_gamme || !inputValues.description_gamme || !inputValues.prix_gamme || !inputValues.provenance_gamme || !inputValues.type_gamme || !inputValues.stock_gamme) {
                 setError("Tous les champs doivent être remplis.");
                 return;
             }
-            newItem = {
+            const newItem = {
                 titre_gamme: inputValues.titre_gamme,
                 description_gamme: inputValues.description_gamme,
                 prix_gamme: inputValues.prix_gamme,
@@ -153,6 +175,20 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
                 console.error("Error adding gamme:", error);
             }
         }
+        if (actionModal === "showDetail") {
+            const newItem = {
+                id : activeGamme.id,
+                titre: inputValues.titre_gamme,
+                description: inputValues.description_gamme,
+                prix: inputValues.prix_gamme,
+                provenance: inputValues.provenance_gamme,
+                type: inputValues.type_gamme,
+                stock: inputValues.stock_gamme,
+            };
+            await UpdateGamme(newItem);
+            loadPieces()
+        }
+
     };
 
     return (
@@ -196,8 +232,8 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
                     {gammes.length > 0 &&
                         gammes.map((gamme, index) => (
                             <CardContainer key={index}>
-                                <Card className="group" href={gamme.url} initial="rest" whileHover="hover" animate="rest">
-                                    <CardImageContainer imageSrc={typeToImage[gamme.type_gamme]}>
+                                <Card className="group" initial="rest" whileHover="hover" animate="rest">
+                                    <CardImageContainer imageSrc={typeToImage[gamme.type]}>
                                         <CardStockContainer>
                                             <CardStock>{gamme.stock}</CardStock>
                                         </CardStockContainer>
@@ -214,7 +250,7 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
                                             }}
                                             transition={{ duration: 0.3 }}
                                         >
-                                            <CardButton>Détails</CardButton>
+                                            <CardButton onClick={() => { setAllActiveData(gamme); getOnClickAction("showDetail"); }}>Détails</CardButton>
                                         </CardHoverOverlay>
                                     </CardImageContainer>
                                     <CardText>
@@ -228,7 +264,7 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Intermediai
             <ModalComponent
                 isOpen={showModal}
                 onRequestClose={closeModal}
-                modalTitle={actionModal.includes("add") ? "Ajouter" : "Supprimer"}
+                modalTitle={actionModal === "addGamme" ? "Ajouter" : "Modifier"}
                 handleAdd={handleActionWithModal}
                 modalInputs={modalSetterInput}
                 inputValues={inputValues}

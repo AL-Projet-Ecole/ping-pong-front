@@ -47,6 +47,7 @@ const ModalComponent = ({
                             placeholder={inputConfig.placeholder}
                             value={value}
                             onChange={(e) => setInputValues(prev => ({ ...prev, [key]: e.target.value }))}
+                            readOnly={inputConfig.readOnly || false}
                         />
                     </div>
                 );
@@ -66,6 +67,7 @@ const ModalComponent = ({
                             options={inputConfig.options}
                             placeholder={inputConfig.placeholder}
                             isSearchable={true}
+                            isDisabled={inputConfig.readOnly || false}
                         />
                     </div>
                 );
@@ -121,7 +123,12 @@ const ModalComponent = ({
                 </ModalBody>
                 <ModalButtonContainer>
                     <ModalButtonCancel onClick={onRequestClose}>Annuler</ModalButtonCancel>
-                    <ModalButton onClick={handleAdd}>{actionModal.includes("del") ? "Supprimer" : "Ajouter"}</ModalButton>
+                    <ModalButton
+                        onClick={handleAdd}
+                        style={{ backgroundColor: actionModal === "showDetail" ? "blue" : "green" }}
+                    >
+                        {actionModal === "showDetail" ? "Modifier" : actionModal.includes("del") ? "Supprimer" : "Ajouter"}
+                    </ModalButton>
                 </ModalButtonContainer>
             </ModalContainer>
         </Modal>
@@ -129,4 +136,3 @@ const ModalComponent = ({
 };
 
 export default ModalComponent;
-

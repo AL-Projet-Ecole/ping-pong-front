@@ -76,7 +76,7 @@ const DataLoader = () => {
             case "/Operations":
                 setAction("operation");
                 setFirstTitle("Opérations");
-                setSecondTitle("Machines");
+                setSecondTitle(null);
                 loadOperations().then(setFirstData);
                 break;
             case "/Machines":
@@ -511,6 +511,7 @@ const DataLoader = () => {
                 closeModal();
                 break;
             case "addUnassignedOpMachine":
+                // MARCHE PAS A VOIR
                 newItem = {
                     idOperation: activeFirstId,
                     idMac: inputValues.option
