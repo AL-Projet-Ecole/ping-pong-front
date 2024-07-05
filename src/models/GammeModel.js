@@ -118,9 +118,9 @@ export async function UpdateGamme(gammeData) {
             throw new Error(errorData.errors[0].msg);
         }
 
-        toast.success("La mise à jour de la machine a bien été effectuée.");
+        toast.success("La mise à jour de la pièce a bien été effectuée.");
     } catch (error) {
-        toast.error("Erreur lors de la mise à jour de la machine.");
+        toast.error("Erreur lors de la mise à jour de la pièce.");
         throw error;
     }
 }

@@ -4,12 +4,13 @@ import tw from "twin.macro";
 import styled, { css } from "styled-components";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
-import {AddGamme, loadGammesByType, loadGammes, UpdateGamme} from "../../models/GammeModel";
+import {AddGamme, loadGammesByType, loadGammes, UpdateGamme, DeleteGamme} from "../../models/GammeModel";
 import ModalComponent from "components/ModalComponent";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AddButton, Heading, SearchInputContainer } from "../../components/CommonStyledComponents";
+import {AddButton, DeleteButton, Heading, SearchInputContainer} from "../../components/CommonStyledComponents";
 import { ReactComponent as PlusIcon } from "feather-icons/dist/icons/plus.svg";
+import { ReactComponent as XIcon } from "feather-icons/dist/icons/x.svg";
 
 // Import des images
 import pingpongStock from "../../assets/images/ping-pong-stock.png";
@@ -19,6 +20,7 @@ import intermediaireImage from "../../assets/images/intermediaire-image.jpg";
 import matieresPremieresImage from "../../assets/images/matieres-premieres-image.jpg";
 import {loadMachines, UpdateMachine} from "../../models/MachineModel";
 import {loadListeOperations, loadOperationById} from "../../models/OperationModel";
+import {DeleteUser, loadUsers} from "../../models/UserModel";
 
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
 const TabsControl = tw.div`flex flex-wrap bg-gray-200 px-2 py-2 rounded leading-none mt-12 xl:mt-0`;
@@ -68,6 +70,7 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Acheter", "
     const [inputValues, setInputValues] = useState({});
     const [activeGamme, setActiveGamme] = useState({});
     const [options, setOptions] = useState({});
+    const [idGamme, setIdGamme] = useState({});
 
     // Tableau associant chaque type de gamme à son image correspondante
     const typeToImage = {
@@ -112,7 +115,7 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Acheter", "
         setActiveGamme(item);
     }
 
-    const getOnClickAction = action => {
+    const getOnClickAction = (action, gamme) => {
         switch (action) {
             case "addGamme":
                 setActionModal("addGamme");
@@ -128,7 +131,13 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Acheter", "
 
                 openModal();
                 break;
+            case "delGamme":
+                setActionModal("delGamme")
+                setIdGamme(gamme.id_user)
+                openModal();
+                break;
             case "showDetail":
+                setAllActiveData(gamme)
                 setActionModal("showDetail");
                 setModalSetterInput({
                     titre_gamme: { type: "text", placeholder: activeGamme.title, value: inputValues.titre_gamme},
@@ -186,7 +195,25 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Acheter", "
                 stock: inputValues.stock_gamme,
             };
             await UpdateGamme(newItem);
-            loadPieces()
+            if (activeTab === "Toutes") {
+                const allGammes = await loadGammes();
+                setGammes(allGammes);
+            } else {
+                const data = await loadGammesByType(activeTab);
+                setGammes(data);
+            }
+            closeModal();
+        }
+        if (actionModal === "delGamme"){
+            await DeleteGamme(idGamme);
+            if (activeTab === "Toutes") {
+                const allGammes = await loadGammes();
+                setGammes(allGammes);
+            } else {
+                const data = await loadGammesByType(activeTab);
+                setGammes(data);
+            }
+            closeModal();
         }
 
     };
@@ -250,11 +277,16 @@ const Stock = ({ heading = "Pièces", tabs = ["Toutes", "Livrable", "Acheter", "
                                             }}
                                             transition={{ duration: 0.3 }}
                                         >
-                                            <CardButton onClick={() => { setAllActiveData(gamme); getOnClickAction("showDetail"); }}>Détails</CardButton>
+                                            <CardButton onClick={() => {getOnClickAction("showDetail", gamme); }}>Détails</CardButton>
                                         </CardHoverOverlay>
                                     </CardImageContainer>
                                     <CardText>
                                         <CardTitle>{gamme.title}</CardTitle>
+                                        <DeleteButton
+                                            onClick={() => getOnClickAction("delGamme", gamme)}
+                                        >
+                                            <XIcon />
+                                        </DeleteButton>
                                     </CardText>
                                 </Card>
                             </CardContainer>

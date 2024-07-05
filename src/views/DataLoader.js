@@ -364,7 +364,7 @@ const DataLoader = () => {
                         idM: { type: "text", placeholder: "Machine associée", readOnly: true },
                         idP: { type: "select", options: [], placeholder: "Selectionnez un Poste de travail"},
                         dateFab: { type: "date", placeholder: "Date de fabrication", onChange: handleDateChange },
-                        description: { type: "text", placeholder: "Renseignez le temps de réalisation (en minutes)" },
+                        description: { type: "text", placeholder: "Renseignez le temps de réalisation (en minutes) " },
                     });
                 } catch (error) {
                     console.error("Erreur lors du chargement des gammes", error);
@@ -450,7 +450,6 @@ const DataLoader = () => {
                 closeModal();
                 break;
             case "delGamme":
-                console.log(idf)
                 await DeleteGamme(idf);
                 loadGammes().then(setFirstData);
                 closeModal();

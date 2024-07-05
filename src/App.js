@@ -4,7 +4,6 @@ import './assets/styles/style.css';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/common/Header/Header';
 import Login from './views/Login/Login';
-import Blog from './views/Blog/Blog';
 import Admin from './views/Admin/AdminUsers'
 import HubAtelier from './views/Atelier/AtelierHub'
 import Gammes from './views/DataLoader'
@@ -14,8 +13,6 @@ import Operation from './views/DataLoader'
 import Postes from './views/DataLoader'
 import Machines from './views/DataLoader'
 import HubCommercial from './views/Commerce/CommercialHub'
-import theme from './assets/themes/theme';
-import HomePage from './views/Home/HomePage';
 import useAuth from './hooks/useAuth';
 
 function App({ location }) {
@@ -42,11 +39,11 @@ function App({ location }) {
               <Header />
           )}
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Login tokenManager={tokenManager} token={token} />} />
             <Route path="/login" element={<Login tokenManager={tokenManager} token={token} />} />
-            <Route path="/blog" element={<Blog tokenManager={tokenManager} token={token} />} />
             <Route path="/admin" element={<Admin tokenManager={tokenManager} token={token} />} />
             <Route path="/HubAtelier" element={<HubAtelier tokenManager={tokenManager} token={token} />} />
+            <Route path="/HubCommercial" element={<HubCommercial tokenManager={tokenManager} token={token} />} />
             <Route path="/Gammes" element={<Gammes tokenManager={tokenManager} token={token} />} />
             <Route path="/Pieces" element={<Pieces tokenManager={tokenManager} token={token} />} />
             <Route path="/Realisations" element={<Realisation tokenManager={tokenManager} token={token} />} />

@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
-import { loadUsers } from "../../models/UserModel";
+import { loadUsers, addUser, DeleteUser } from "../../models/UserModel";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { ContentWithPaddingXl, Container } from "components/misc/Layouts.js";
 import { SectionHeading} from "components/misc/Headings.js";
-import { ReactComponent as TwitterIcon } from "../../assets/images/twitter-icon.svg";
-import { ReactComponent as LinkedinIcon } from "../../assets/images/linkedin-icon.svg";
-import { ReactComponent as GithubIcon } from "../../assets/images/github-icon.svg";
-import defaultProfilePic from "../../assets/profilePictures/defaultPP.png";
+import defaultProfilePic from "../../assets/images/defaultPP.jpg";
+import {AddButton, DeleteButton, SearchInputContainer} from "../../components/CommonStyledComponents";
+import { ReactComponent as PlusIcon } from "feather-icons/dist/icons/plus.svg";
+import ModalComponent from "../../components/ModalComponent";
+import {ToastContainer} from "react-toastify";
+import { ReactComponent as XIcon } from "feather-icons/dist/icons/x.svg";
+import {DeleteGamme, loadGammes} from "../../models/GammeModel";
+
 
 const HeadingContainer = tw.div``;
 const Heading = tw(SectionHeading)``;
@@ -65,21 +69,104 @@ export default ({
                     heading = "Administration utilisateurs",
                 }) => {
     const [allUsers, setAllUsers] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [error, setError] = useState(null);
+    const [actionModal, setActionModal] = useState("");
+    const [modalSetterInput, setModalSetterInput] = useState({});
+    const [inputValues, setInputValues] = useState({});
+    const [activeGamme, setActiveGamme] = useState({});
+    const [options, setOptions] = useState({});
+    const [idUser, setIdUser] = useState({});
 
     useEffect(() => {
         loadUsers().then(data => {
             setAllUsers(data);
         });
+        setOptions([
+            { value: 1, label: "Atelier" },
+            { value: 2, label: "Commercial" },
+            { value: 0, label: "Administrateur" }
+        ])
     }, []);
+
+
+    const getOnClickAction = (action, user) => {
+        switch (action) {
+            case "addUser":
+
+                setActionModal("addUser")
+                setModalSetterInput({
+                    login_user: { type: "text", placeholder: "Login." },
+                    mdp_user: { type: "text", placeholder: "Mot de passe." },
+                    nom_user: { type: "text", placeholder: "Nom." },
+                    prenom_user: { type: "text", placeholder: "Prénom." },
+                    email_user: { type: "text", placeholder: "Email." },
+                    role_user: { type: "select", options , placeholder: "Choisir le role." },
+                });
+                openModal()
+                break;
+            case "delUser":
+
+                setActionModal("delUser")
+                setIdUser(user.id_user)
+
+                openModal();
+                break;
+        }
+    };
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
+    const handleActionWithModal = async () => {
+        let newItem = {};
+        switch (actionModal){
+            case "addUser":
+                if (!inputValues.login_user && !inputValues.mdp_user && !inputValues.role_user) {
+                    setError("Le champs Login, Mdp et Role doivent être remplis.");
+                    return;
+                }
+                newItem = {
+                    login_user: inputValues.login_user,
+                    mdp_user: inputValues.mdp_user,
+                    nom_user: inputValues.nom_user,
+                    prenom_user: inputValues.prenom_user,
+                    email_user: inputValues.email_user,
+                    role_user: inputValues.role_user,
+                };
+                await addUser(newItem);
+                loadUsers().then(data => {
+                    setAllUsers(data);
+                });
+                closeModal();
+                break;
+            case "delUser":
+                await DeleteUser(idUser);
+                loadUsers().then(data => {
+                    setAllUsers(data);
+                });
+                closeModal();
+                break;
+        }
+    }
 
     return (
         <AnimationRevealPage>
             <Container>
                 <ContentWithPaddingXl>
                     <HeadingContainer>
-                        {heading && <Heading>{heading}</Heading>}
+                        {heading && <Heading>{heading}
+                        </Heading>}
                     </HeadingContainer>
                     <Users>
+                        <AddButton onClick={() => getOnClickAction("addUser")}>
+                            <PlusIcon />
+                        </AddButton>
                         {allUsers.length > 0 && allUsers.map((user, index) => (
                             <User key={index}>
                                 <UserImage imageSrc={getProfileImagePath(user.id_user)} />
@@ -94,10 +181,27 @@ export default ({
                                         ))}
                                     </UserLinks>
                                 </UserContent>
+                                <DeleteButton
+                                    onClick={() => getOnClickAction("delUser", user)}
+                                >
+                                    <XIcon />
+                                </DeleteButton>
                             </User>
                         ))}
                     </Users>
                 </ContentWithPaddingXl>
+                <ModalComponent
+                    isOpen={showModal}
+                    onRequestClose={closeModal}
+                    modalTitle={actionModal.includes("add") ? "Ajouter" : "Supprimer"}
+                    handleAdd={handleActionWithModal}
+                    modalInputs={modalSetterInput}
+                    inputValues={inputValues}
+                    setInputValues={setInputValues}
+                    error={error}
+                    actionModal={actionModal}
+                />
+                <ToastContainer />
             </Container>
         </AnimationRevealPage>
     );

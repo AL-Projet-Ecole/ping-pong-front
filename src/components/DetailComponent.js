@@ -115,8 +115,8 @@ export default ({
                         setTitleMachine("Machine");
                         setMachine(machine.title);
 
-                        setTitleTFab("Temps de réalisation");
-                        setTFab(activeItemDateFab + " minutes.");
+                        setTitleTFab("Temps de réalisation | Temps estimé ");
+                        setTFab(activeItemDateFab + " minutes | " + operation.description + " minutes");
 
                         setTitleDFab("Date de réalisation");
                         setDFab(activeItemDescription);
